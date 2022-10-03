@@ -9,14 +9,16 @@ import kotlin.math.min
 
 class ContentBuilder(
     private val pages: PageStream,
-    private val x: Float,
-    private val maxX: Float,
-    private val startingY: Float,
+    val x: Float,
+    val maxX: Float,
+    val startingY: Float,
 ) {
     companion object {
         @JvmStatic
-        val WHITESPACE = Regex("""\s""")
+        private val WHITESPACE = Regex("\\s")
     }
+
+    fun withLimits(x: Float, maxX: Float, startingY: Float) = ContentBuilder(pages, x, maxX, startingY)
 
     fun drawLine(start: Point, end: Point, lineParameters: LineStyle): Size {
         val height = end.y - start.y
@@ -38,19 +40,25 @@ class ContentBuilder(
         return writeTextLinesInternal(lines, style)
     }
 
-    fun writeFlexSizeText(text: String, style: TextStyle): Size {
+    fun writeFlexSizeText(text: String, style: TextStyle, align: Alignment): Size {
         val font = style.font
-        val maxSize = (maxX - x) * 1000 / font.getStringWidth(text)
+        val width = maxX - x
+        val maxSize = width * 1000 / font.getStringWidth(text)
         val size = min(style.fontSize, maxSize)
         val leading = style.leading * size
         val wrapper = pages.contentStreamFor(startingY, leading)
         wrapper.stream.beginText()
         val y = wrapper.realOffset - leading
-        wrapper.stream.newLineAtOffset(x, y)
+        val textWidth = style.font.getStringWidth(text) * size / 1000
+        val newX = when (align) {
+            Alignment.LEFT -> x
+            Alignment.CENTER -> (width - textWidth) / 2
+        }
+        wrapper.stream.newLineAtOffset(newX, y)
         wrapper.stream.setFont(font, size)
         wrapper.stream.showText(text)
         wrapper.stream.endText()
-        return Size(width = 0f, height = wrapper.virtualOffset + leading - this.startingY)
+        return Size(width = maxX - x, height = wrapper.virtualOffset + leading - this.startingY)
     }
 
     fun writeWrappingText(text: String, style: TextStyle): Size {
@@ -114,11 +122,10 @@ class ContentBuilder(
         }
         wrapper.stream.endText()
 
-        return Size(width = 0f, height = currentOffset - startingY)
+        return Size(width = maxX - x, height = currentOffset - startingY)
     }
 
     private fun getStringWidth(text: String, textStyle: TextStyle): Float {
         return textStyle.font.getStringWidth(text) * textStyle.fontSize / 1000
     }
 }
-

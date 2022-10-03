@@ -17,8 +17,8 @@ class Renderer(private val context: RendererContext, private val components: Mut
         components.forEach { component ->
             val content = ContentBuilder(
                 pages = pages,
-                x = context.margin.width,
-                maxX = context.pageSize.width - context.margin.width,
+                x = context.margin.left,
+                maxX = context.pageSize.width - context.margin.right,
                 startingY = virtualY,
             )
             val box = component.render(context.style, content)
@@ -48,7 +48,7 @@ class PageStream(private val document: PDDocument, private val context: Renderer
             assertPageSize(newPage)
             return ContentStreamWrapper(
                 stream = streams[newPage],
-                realOffset = pageHeight - context.margin.height,
+                realOffset = pageHeight - context.margin.top,
                 virtualOffset = newPage * contentHeight,
                 page = newPage,
             )
@@ -56,8 +56,7 @@ class PageStream(private val document: PDDocument, private val context: Renderer
         assertPageSize(page)
         return ContentStreamWrapper(
             stream = streams[page],
-            realOffset = pageHeight - context.margin.height - offsetFromPage,
-
+            realOffset = pageHeight - context.margin.top - offsetFromPage,
             virtualOffset = virtualY,
             page = page,
         )

@@ -5,6 +5,9 @@ plugins {
 group 'org.example'
 version 'unspecified'
 
+project.sourceCompatibility = '17'
+project.targetCompatibility = '17'
+
 repositories {
     mavenCentral()
 }
