@@ -9,7 +9,7 @@ class TextStyle(
 ) {
 
     constructor(
-        font: PDFont?, fontSize: Float?, textColor: Color?, leading: Float?
+        font: PDFont? = null, fontSize: Float? = null, textColor: Color? = null, leading: Float? = null,
     ) : this(
         font = font ?: DEFAULT_STYLE.font,
         fontSize = fontSize ?: DEFAULT_STYLE.fontSize,

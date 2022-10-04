@@ -1,9 +1,11 @@
 package pdfcrate.render
 
+import org.apache.pdfbox.pdmodel.font.PDFont
 import pdfcrate.document.LineStyle
 import pdfcrate.document.TextStyle
 import pdfcrate.util.Point
 import pdfcrate.util.Size
+import kotlin.math.max
 import kotlin.math.min
 
 
@@ -20,19 +22,38 @@ class ContentBuilder(
 
     fun withLimits(x: Float, maxX: Float, startingY: Float) = ContentBuilder(pages, x, maxX, startingY)
 
-    fun drawLine(start: Point, end: Point, lineParameters: LineStyle): Size {
-        val height = end.y - start.y
+    fun drawPath(points: List<Point>, lineParameters: LineStyle): Size {
+        val (width, height) = pointsSize(points)
         val wrapper = pages.contentStreamFor(startingY, height)
-        val absoluteStart = translatePointToOffset(start, x, wrapper.realOffset)
-        val absoluteEnd = translatePointToOffset(end, x, wrapper.realOffset)
         wrapper.stream.setLineCapStyle(lineParameters.capStyle)
         wrapper.stream.setLineWidth(lineParameters.width)
         wrapper.stream.setLineDashPattern(lineParameters.dashPattern, lineParameters.dashPhase)
-        wrapper.stream.moveTo(absoluteStart.x, absoluteStart.y)
-        wrapper.stream.lineTo(absoluteEnd.x, absoluteEnd.y)
         wrapper.stream.setStrokingColor(lineParameters.color)
+        val iterator = points.listIterator()
+        val first = iterator.next()
+        val start = translatePointToOffset(first, x, wrapper.realOffset)
+        wrapper.stream.moveTo(start.x, start.y)
+        iterator.forEachRemaining {
+            val (x, y) = translatePointToOffset(it, x, wrapper.realOffset)
+            wrapper.stream.lineTo(x, y)
+            wrapper.stream.moveTo(x, y)
+        }
         wrapper.stream.stroke()
-        return Size.fromPoints(absoluteStart, absoluteEnd)
+        return Size(width, height)
+    }
+
+    private fun pointsSize(points: List<Point>): Size {
+        var minX = 0f
+        var maxX = 0f
+        var minY = 0f
+        var maxY = 0f
+        points.forEach {
+            minX = min(minX, it.x)
+            maxX = max(maxX, it.x)
+            minY = min(minY, it.y)
+            maxY = max(maxY, it.y)
+        }
+        return Size(maxX - minX, maxY - minY)
     }
 
     fun writeTextLines(text: String, style: TextStyle): Size {
@@ -50,15 +71,20 @@ class ContentBuilder(
         wrapper.stream.beginText()
         val y = wrapper.realOffset - leading
         val textWidth = style.font.getStringWidth(text) * size / 1000
-        val newX = when (align) {
-            Alignment.LEFT -> x
-            Alignment.CENTER -> (width - textWidth) / 2
+        val (newX, usedWidth) = when (align) {
+            Alignment.LEFT -> {
+                Pair(x, getStringWidth(text, font, size))
+            }
+
+            Alignment.CENTER -> {
+                Pair((width - textWidth) / 2, maxX - x)
+            }
         }
         wrapper.stream.newLineAtOffset(newX, y)
         wrapper.stream.setFont(font, size)
         wrapper.stream.showText(text)
         wrapper.stream.endText()
-        return Size(width = maxX - x, height = wrapper.virtualOffset + leading - this.startingY)
+        return Size(width = usedWidth, height = wrapper.virtualOffset + leading - this.startingY)
     }
 
     fun writeWrappingText(text: String, style: TextStyle): Size {
@@ -72,7 +98,7 @@ class ContentBuilder(
             }
             builder.append(it)
             val line = builder.toString()
-            if (getStringWidth(line, style) > lineSize) {
+            if (getStringWidth(line, style.font, style.fontSize) > lineSize) {
                 builder.delete(builder.length - it.length - 1, builder.length)
                 lines.add(builder.toString())
                 builder.setLength(0)
@@ -95,6 +121,7 @@ class ContentBuilder(
     ): Size {
         val font = style.font
         val leading = style.leading * style.fontSize
+        var width = 0f
         var currentOffset = startingY
         var wrapper = pages.contentStreamFor(currentOffset, leading)
         currentOffset = wrapper.virtualOffset
@@ -117,15 +144,16 @@ class ContentBuilder(
             }
             wrapper.stream.setFont(font, style.fontSize)
             wrapper.stream.showText(line)
+            width = max(width, getStringWidth(line, style.font, style.fontSize))
             wrapper.stream.newLine()
             currentOffset = wrapper.virtualOffset + leading
         }
         wrapper.stream.endText()
 
-        return Size(width = maxX - x, height = currentOffset - startingY)
+        return Size(width = width, height = currentOffset - startingY)
     }
 
-    private fun getStringWidth(text: String, textStyle: TextStyle): Float {
-        return textStyle.font.getStringWidth(text) * textStyle.fontSize / 1000
+    private fun getStringWidth(text: String, font: PDFont, fontSize: Float): Float {
+        return font.getStringWidth(text) * fontSize / 1000
     }
 }

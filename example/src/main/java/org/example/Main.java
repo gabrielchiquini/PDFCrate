@@ -55,13 +55,20 @@ public class Main {
 
   public static void main(String[] args) throws FileNotFoundException {
     final var document = new Document();
+    final var path =
+        List.of(
+            new Point(0, 0),
+            new Point(40, 40),
+            new Point(150, 40),
+            new Point(120, 20),
+            new Point(120, 100));
     document.setMargin(Edges.all(30));
-    document.add(Lines.builder().start(new Point(0, 0)).end(new Point(100, 100)).build());
+    document.add(Lines.builder().points(path).build());
     document.add(new Paragraph(BASE));
     document.add(new Padding(new SimpleText(BASE), Edges.all(60)));
     var textStyle = TextStyle.builder().fontSize(1000f).build();
     document.add(new FlexibleText("TAMANHO 1000", Alignment.LEFT, textStyle));
-    document.add(Lines.builder().start(new Point(0, 0)).end(new Point(100, 100)).build());
+    document.add(Lines.builder().points(path).build());
     document.add(
         new ColumnLayout(
             List.of(new FlexibleText("OLAOLAOLA", Alignment.LEFT, textStyle), new Paragraph(BASE)),
