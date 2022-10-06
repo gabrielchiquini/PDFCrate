@@ -2,12 +2,14 @@ package org.example;
 
 import pdfcrate.components.*;
 import pdfcrate.document.Document;
+import pdfcrate.document.LineStyle;
 import pdfcrate.document.TextStyle;
 import pdfcrate.render.Alignment;
 import pdfcrate.util.Edges;
 import pdfcrate.util.Point;
 import pdfcrate.util.SpacingStyle;
 
+import java.awt.*;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.List;
@@ -61,9 +63,21 @@ public class Main {
             new Point(40, 40),
             new Point(150, 40),
             new Point(120, 20),
-            new Point(120, 100));
+            new Point(120, 100),
+            new Point(0, 100));
     document.setMargin(Edges.all(30));
-    document.add(Lines.builder().points(path).build());
+    document.add(
+        Lines.builder()
+            .points(path)
+            .lineStyle(
+                LineStyle.builder()
+                    .width(5f)
+                    .capStyle(1)
+                    .dashPattern(new float[] {10, 6})
+                    .dashPhase(0f)
+                    .color(Color.darkGray)
+                    .build())
+            .build());
     document.add(new Paragraph(BASE));
     document.add(new Padding(new SimpleText(BASE), Edges.all(60)));
     var textStyle = TextStyle.builder().fontSize(1000f).build();

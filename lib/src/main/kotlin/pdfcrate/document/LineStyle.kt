@@ -19,10 +19,17 @@ class LineStyle(
             width = 1f,
             color = Color.BLACK,
         )
+
+        @JvmStatic
+        fun builder() = Builder()
     }
 
     constructor(
-        dashPattern: FloatArray?, dashPhase: Float?, capStyle: Int?, width: Float?, color: Color?
+        dashPattern: FloatArray? = null,
+        dashPhase: Float? = null,
+        capStyle: Int? = null,
+        width: Float? = null,
+        color: Color? = null,
     ) : this(
         dashPattern = dashPattern ?: floatArrayOf(),
         dashPhase = dashPhase ?: 0f,

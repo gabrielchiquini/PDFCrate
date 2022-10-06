@@ -1,9 +1,8 @@
 package pdfcrate.components
 
-import pdfcrate.document.Style
-import pdfcrate.render.ContentBuilder
+import pdfcrate.render.ComponentContext
 import pdfcrate.util.Size
 
 interface Component {
-    fun render(style: Style, renderer: ContentBuilder): Size
+    fun render(context: ComponentContext): Size
 }

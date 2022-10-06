@@ -1,8 +1,7 @@
 package pdfcrate.components
 
-import pdfcrate.document.Style
 import pdfcrate.exceptions.NotEnoughSizeException
-import pdfcrate.render.ContentBuilder
+import pdfcrate.render.ComponentContext
 import pdfcrate.util.Edges
 import pdfcrate.util.Size
 import pdfcrate.util.SpacingStyle
@@ -23,21 +22,21 @@ class ColumnLayout(content: List<Component>, constraints: List<ColumnConstraints
         this.constraints = constraints
     }
 
-    override fun render(style: Style, renderer: ContentBuilder): Size {
-        val availableSpace = renderer.maxX - renderer.x
+    override fun render(context: ComponentContext): Size {
+        val availableSpace = context.maxX - context.x
         val sizes = getSizes(availableSpace)
-        var offsetX = renderer.x
+        var offsetX = context.x
         var height = 0f
         for (i in sizes.indices) {
             val columnSize = sizes[i]
             val padding = constraints[i].padding
-            val builder = renderer.withLimits(
+            val childContext = context.withLimits(
                 offsetX + padding.left,
                 offsetX + columnSize - padding.right,
-                renderer.startingY + padding.top
+                context.y + padding.top
             )
-            val renderResult = content[i].render(style, builder)
-            height = max(renderResult.height + padding.bottom, height)
+            val renderResult = content[i].render(childContext)
+            height = max(renderResult.height + padding.bottom + padding.top, height)
             offsetX += columnSize
         }
         return Size(availableSpace, height)

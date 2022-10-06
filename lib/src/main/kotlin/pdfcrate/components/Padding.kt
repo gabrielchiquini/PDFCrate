@@ -1,19 +1,17 @@
 package pdfcrate.components
 
-import pdfcrate.document.Style
-import pdfcrate.render.ContentBuilder
+import pdfcrate.render.ComponentContext
 import pdfcrate.util.Edges
 import pdfcrate.util.Size
 
 class Padding(private val inner: Component, private val padding: Edges) : Component {
 
-    override fun render(style: Style, renderer: ContentBuilder): Size {
+    override fun render(context: ComponentContext): Size {
         val rendered = inner.render(
-            style,
-            renderer.withLimits(
-                x = renderer.x + padding.left,
-                maxX = renderer.maxX - padding.right,
-                startingY = renderer.startingY + padding.top
+            context.withLimits(
+                x = context.x + padding.left,
+                maxX = context.maxX - padding.right,
+                startingY = context.y + padding.top,
             )
         )
         return rendered.copy(
