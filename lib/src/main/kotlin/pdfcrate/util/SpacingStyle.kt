@@ -1,5 +1,5 @@
 package pdfcrate.util
 
 enum class SpacingStyle {
-    ABSOLUTE, PROPORTIONAL
+    ABSOLUTE, PROPORTIONAL, SHRINK
 }

@@ -4,16 +4,25 @@ import pdfcrate.document.TextStyle
 import pdfcrate.render.ComponentContext
 import pdfcrate.util.RenderingUtil.Companion.textWidth
 import pdfcrate.util.Size
+import pdfcrate.util.SizeBlocks
 import kotlin.math.max
 
 
 class SimpleText @JvmOverloads constructor(
     private val lines: List<String>,
     private val localStyle: TextStyle? = null
-) : Component {
+) : SizedComponent {
 
     @JvmOverloads
     constructor(text: String, localStyle: TextStyle? = null) : this(text.split('\n'), localStyle)
+
+    override fun getBlocks(context: ComponentContext): SizeBlocks {
+        val style = localStyle ?: context.style.textStyle
+        val font = style.font
+        val leading = style.leading * style.fontSize
+        val maxLineSize = lines.maxOfOrNull { textWidth(it, font, style.fontSize) }
+        return SizeBlocks(maxLineSize!!, List(lines.size) { leading })
+    }
 
     override fun render(context: ComponentContext): Size {
         val style = localStyle ?: context.style.textStyle

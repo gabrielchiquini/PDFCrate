@@ -9,11 +9,13 @@ class ComponentContext(
     val y: Float,
     val style: Style,
 ) {
-    fun withLimits(x: Float, maxX: Float, startingY: Float) = ComponentContext(
+    fun withLimits(x: Float, maxX: Float, y: Float) = ComponentContext(
         pages = pages,
         x = x,
         maxX = maxX,
-        y = startingY,
+        y = y,
         style = style
     )
+
+    fun width(): Float = maxX - x
 }

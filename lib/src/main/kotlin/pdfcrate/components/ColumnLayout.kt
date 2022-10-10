@@ -54,6 +54,7 @@ class ColumnLayout(content: List<Component>, constraints: List<ColumnConstraints
                 }
 
                 SpacingStyle.PROPORTIONAL -> totalProportional += constraints.value
+                else -> throw NotImplementedError("ColumnLayout does not support shrink style")
             }
         }
         val totalRemaining = availableSpace - totalAbsolute

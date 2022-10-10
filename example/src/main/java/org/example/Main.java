@@ -92,6 +92,36 @@ public class Main {
     textStyle = TextStyle.builder().fontSize(32f).build();
     document.add(new FlexibleText("TAMANHO 32", Alignment.CENTER, textStyle));
     document.add(new SimpleText(BASE));
+    final var cellPadding = new Edges(0f, 10f, 10f, 0);
+    document.add(
+        new Table(
+            new SizedComponent[][] {
+              {
+                new FlexibleText("TESTING TESTING:", Alignment.LEFT),
+                new FlexibleText("TESTING TESTED", Alignment.LEFT),
+                new SimpleText("WHAT ABOUT\nWRAPPING LINES\nINSIDE TABLES")
+              },
+              {
+                new FlexibleText("TESTING TESTING 341:", Alignment.LEFT),
+                new FlexibleText("TESTING TESTED", Alignment.LEFT),
+                new FlexibleText("TEST TESTING, TESTED", Alignment.LEFT)
+              },
+              {
+                Lines.builder().points(path).build(),
+                new SimpleText("THAT TEXT IS TOO BIG TO FIT IN ONLY 200 pixels"),
+                new FlexibleText("TEST TESTING, TESTED", Alignment.LEFT)
+              },
+              {
+                Lines.builder().points(path).build(),
+                new SimpleText("THAT TEXT IS TOO BIG TO FIT IN ONLY 200 pixels"),
+                new FlexibleText("TEST TESTING, TESTED", Alignment.LEFT)
+              }
+            },
+            new TableColumn[] {
+              new TableColumn(new ColumnSizing(SpacingStyle.SHRINK, 0f), cellPadding),
+              new TableColumn(new ColumnSizing(SpacingStyle.ABSOLUTE, 200f), cellPadding),
+              new TableColumn(new ColumnSizing(SpacingStyle.PROPORTIONAL, 1f), cellPadding)
+            }));
     document.render(new FileOutputStream("test-output/test.pdf"));
   }
 }

@@ -11,4 +11,8 @@ class Edges(val top: Float, val right: Float, val bottom: Float, val left: Float
         @JvmStatic
         fun all(value: Float) = Edges(value, value, value, value)
     }
+
+    fun horizontalSize(): Float {
+        return left + right
+    }
 }

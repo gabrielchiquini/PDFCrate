@@ -51,6 +51,15 @@ class LinesTest {
     }
 
     @Test
+    fun testSizeBlocks() {
+        mockContext()
+        val size =
+            Lines(listOf(Point(200f, 120f), Point(100f, 100f), Point(50f, 50f), Point(300f, 50f))).getBlocks(context)
+        assertThat(size.width).isEqualTo(300f)
+        assertThat(size.heightBlocks).hasSize(1).allMatch { it == 120f }
+    }
+
+    @Test
     fun testBuilder() {
         mockContext()
         val lines =

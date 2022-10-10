@@ -2,6 +2,7 @@ package pdfcrate.components
 
 import pdfcrate.document.LineStyle
 import pdfcrate.render.ComponentContext
+import pdfcrate.util.SizeBlocks
 import pdfcrate.util.Point
 import pdfcrate.util.Size
 import kotlin.math.max
@@ -10,7 +11,7 @@ import kotlin.math.max
 class Lines(
     private val points: List<Point>,
     private val lineStyle: LineStyle? = null
-) : Component {
+) : SizedComponent {
 
     constructor(builder: Builder) : this(
         points = builder.points ?: throw NullPointerException(),
@@ -31,6 +32,11 @@ class Lines(
         fun points(value: List<Point>) = apply { this.points = value }
         fun lineStyle(value: LineStyle) = apply { this.lineStyle = value }
         fun build() = Lines(this)
+    }
+
+    override fun getBlocks(context: ComponentContext): SizeBlocks {
+        val (width, height) = pointsSize(points)
+        return SizeBlocks.single(width, height)
     }
 
     override fun render(context: ComponentContext): Size {

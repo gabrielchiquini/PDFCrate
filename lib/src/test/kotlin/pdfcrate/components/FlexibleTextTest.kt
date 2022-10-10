@@ -65,6 +65,24 @@ class FlexibleTextTest {
         verifyShowText()
     }
 
+    @Test
+    fun getTextSizeCenter() {
+        mockContext()
+        val fontSize = 20f
+        val size = FlexibleText(TEST_TEXT, Alignment.CENTER, TextStyle(fontSize = fontSize)).getBlocks(context)
+        assertThat(size.heightBlocks).hasSize(1).allMatch { it == fontSize }
+        assertThat(size.width).isEqualTo(DEFAULT_SIZE)
+    }
+
+    @Test
+    fun getTextSizeLeft() {
+        mockContext()
+        val fontSize = 20f
+        val size = FlexibleText(TEST_TEXT, Alignment.LEFT, TextStyle(fontSize = fontSize)).getBlocks(context)
+        assertThat(size.heightBlocks).hasSize(1).allMatch { it == fontSize }
+        assertThat(size.width).isLessThan(DEFAULT_SIZE)
+    }
+
     private fun verifyShowText() {
         verify { contentStream.showText(eq(TEST_TEXT)) }
         verify { contentStream.beginText() }

@@ -6,7 +6,7 @@ import io.mockk.junit5.MockKExtension
 import io.mockk.slot
 import io.mockk.verify
 import org.apache.pdfbox.pdmodel.PDPageContentStream
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import pdfcrate.document.Style
@@ -35,8 +35,8 @@ class SimpleTextTest {
         mockContext()
         val fontSize = DEFAULT_FONT_SIZE
         val size = SimpleText(TEST_TEXT, TextStyle(fontSize = fontSize)).render(context)
-        Assertions.assertThat(size.width).isLessThan(DEFAULT_SIZE)
-        Assertions.assertThat(size.height).isEqualTo(fontSize)
+        assertThat(size.width).isLessThan(DEFAULT_SIZE)
+        assertThat(size.height).isEqualTo(fontSize)
         verify { pageStream.contentStreamFor(eq(0f), eq(fontSize)) }
         verify { contentStream.newLineAtOffset(eq(0f), eq(DEFAULT_SIZE - fontSize)) }
         verify { contentStream.setFont(any(), fontSize) }
@@ -51,8 +51,8 @@ class SimpleTextTest {
         val fontSize = DEFAULT_FONT_SIZE
         val text = "$TEST_TEXT\n$TEST_TEXT\n$TEST_TEXT"
         val size = SimpleText(text, TextStyle(fontSize = fontSize)).render(context)
-        Assertions.assertThat(size.width).isLessThan(DEFAULT_SIZE)
-        Assertions.assertThat(size.height).isEqualTo(fontSize * 3)
+        assertThat(size.width).isLessThan(DEFAULT_SIZE)
+        assertThat(size.height).isEqualTo(fontSize * 3)
         verify { pageStream.contentStreamFor(eq(0f), eq(fontSize)) }
         verify { contentStream.newLineAtOffset(eq(0f), eq(DEFAULT_SIZE - fontSize)) }
         verify(exactly = 3) { contentStream.newLine() }
@@ -70,11 +70,21 @@ class SimpleTextTest {
             text += "$TEST_TEXT\n"
         }
         val size = SimpleText(text, TextStyle(fontSize = fontSize)).render(context)
-        Assertions.assertThat(size.width).isLessThan(DEFAULT_SIZE)
-        Assertions.assertThat(size.height).isGreaterThan(DEFAULT_SIZE)
+        assertThat(size.width).isLessThan(DEFAULT_SIZE)
+        assertThat(size.height).isGreaterThan(DEFAULT_SIZE)
         verify { pageStream.contentStreamFor(eq(0f), eq(fontSize)) }
         verify(exactly = 2) { contentStream.newLineAtOffset(any(), any()) }
         verifyBasicCommands(times = 2)
+    }
+
+    @Test
+    fun sizeBlocksTest() {
+        mockContext()
+        val fontSize = DEFAULT_FONT_SIZE
+        val text = "$TEST_TEXT\n$TEST_TEXT\n"
+        val size = SimpleText(text, TextStyle(fontSize = fontSize)).getBlocks(context)
+        assertThat(size.heightBlocks).hasSize(3)
+        assertThat(size.heightBlocks).allMatch { it == fontSize }
     }
 
     private fun verifyBasicCommands(fontSize: Float = DEFAULT_FONT_SIZE, times: Int = 1) {

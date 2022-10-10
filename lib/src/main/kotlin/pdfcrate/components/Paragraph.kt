@@ -5,14 +5,26 @@ import pdfcrate.render.ComponentContext
 import pdfcrate.util.RenderingUtil.Companion.WHITESPACE_REGEX
 import pdfcrate.util.RenderingUtil.Companion.textWidth
 import pdfcrate.util.Size
+import pdfcrate.util.SizeBlocks
 
 
 class Paragraph @JvmOverloads constructor(
-    private val text: String,
-    private val localStyle: TextStyle? = null
-) : Component {
+    private val text: String, private val localStyle: TextStyle? = null
+) : SizedComponent {
+    override fun getBlocks(context: ComponentContext): SizeBlocks {
+        val lines = getLines(context)
+        return SimpleText(lines, getStyle(context)).getBlocks(context)
+    }
+
     override fun render(context: ComponentContext): Size {
-        val style = localStyle ?: context.style.textStyle
+        val lines = getLines(context)
+        return SimpleText(lines, getStyle(context)).render(context)
+    }
+
+    private fun getLines(
+        context: ComponentContext
+    ): MutableList<String> {
+        val style = getStyle(context)
         val words = text.split(WHITESPACE_REGEX)
         val lineSize = context.maxX - context.x
         val builder = StringBuilder()
@@ -33,6 +45,8 @@ class Paragraph @JvmOverloads constructor(
         if (builder.isNotEmpty()) {
             lines.add(builder.toString())
         }
-        return SimpleText(lines, style).render(context)
+        return lines
     }
+
+    private fun getStyle(context: ComponentContext) = localStyle ?: context.style.textStyle
 }
