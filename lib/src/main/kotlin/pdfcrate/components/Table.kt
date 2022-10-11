@@ -28,7 +28,7 @@ class Table(private val data: Array<Array<SizedComponent>>, private val columns:
                 }
                 x += width
             }
-            heightUsed = rowY + maxHeight
+            heightUsed = rowY + maxHeight - context.y
         }
         return Size(context.width(), heightUsed)
     }

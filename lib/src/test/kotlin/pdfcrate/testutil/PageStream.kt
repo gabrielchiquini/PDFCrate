@@ -12,6 +12,8 @@ import pdfcrate.util.Edges
 import pdfcrate.util.Size
 
 fun mockPageStreamSimple(pageStream: PageStream, contentStream: PDPageContentStream, size: Float) {
+    val document = mockk<PDDocument>(relaxed = true)
+    every { pageStream.document } returns document
     every { pageStream.contentStreamFor(any(), any()) } returns ContentStreamWrapper(
         stream = contentStream,
         page = 0,

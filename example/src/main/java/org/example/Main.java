@@ -1,5 +1,6 @@
 package org.example;
 
+import pdfcrate.components.Image;
 import pdfcrate.components.*;
 import pdfcrate.document.Document;
 import pdfcrate.document.LineStyle;
@@ -7,12 +8,16 @@ import pdfcrate.document.TextStyle;
 import pdfcrate.render.Alignment;
 import pdfcrate.util.Edges;
 import pdfcrate.util.Point;
+import pdfcrate.util.Size;
 import pdfcrate.util.SpacingStyle;
 
 import java.awt.*;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Objects;
 
 public class Main {
 
@@ -55,7 +60,7 @@ public class Main {
           Aenean pharetra ante eu pellentesque convallis.
           Phasellus quis diam quis orci tempor dignissim eget vel erat.""";
 
-  public static void main(String[] args) throws FileNotFoundException {
+  public static void main(String[] args) throws FileNotFoundException, URISyntaxException {
     final var document = new Document();
     final var path =
         List.of(
@@ -122,6 +127,15 @@ public class Main {
               new TableColumn(new ColumnSizing(SpacingStyle.ABSOLUTE, 200f), cellPadding),
               new TableColumn(new ColumnSizing(SpacingStyle.PROPORTIONAL, 1f), cellPadding)
             }));
+
+    document.add(Image.fromFile(imageFile(), new Size(400, 100f)));
+    document.add(ScalingImage.fromWidth(imageFile(), 200f));
     document.render(new FileOutputStream("test-output/test.pdf"));
+  }
+
+  private static File imageFile() throws URISyntaxException {
+    ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+    final var url = classloader.getResource("test.png");
+    return new File(Objects.requireNonNull(url).toURI());
   }
 }

@@ -6,7 +6,7 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream
 import org.apache.pdfbox.pdmodel.common.PDRectangle
 import kotlin.math.floor
 
-class PageStream(private val document: PDDocument, private val context: RenderContext) {
+class PageStream(val document: PDDocument, private val context: RenderContext) {
     private val streams: MutableList<PDPageContentStream> = mutableListOf()
     private val pages: MutableList<PDPage> = mutableListOf()
 
