@@ -5,7 +5,7 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import org.apache.pdfbox.pdmodel.PDPageContentStream
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -13,6 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import pdfcrate.document.Style
 import pdfcrate.render.ComponentContext
 import pdfcrate.render.PageStream
+import pdfcrate.testutil.generateRenderContext
 import pdfcrate.testutil.mockPageStreamSimple
 import pdfcrate.util.Size
 import java.io.File
@@ -53,7 +54,7 @@ class ScalingImageTest {
         mockImage()
         val image = ScalingImage.fromWidth(ByteArray(0), "test", 5f)
         val size = image.render(context)
-        Assertions.assertThat(size).isEqualTo(Size(5f, 8f))
+        assertThat(size).isEqualTo(Size(5f, 8f))
     }
 
     @Test
@@ -63,7 +64,7 @@ class ScalingImageTest {
         val file = mockk<File>(relaxed = true)
         val image = ScalingImage.fromWidth(file, 50f)
         val size = image.render(context)
-        Assertions.assertThat(size).isEqualTo(Size(50f, 80f))
+        assertThat(size).isEqualTo(Size(50f, 80f))
         verify { PDImageXObject.createFromFileByContent(eq(file), any()) }
     }
 
@@ -73,7 +74,7 @@ class ScalingImageTest {
         mockImage()
         val image = ScalingImage.fromHeight(ByteArray(0), "test", 60f)
         val size = image.render(context)
-        Assertions.assertThat(size).isEqualTo(Size(37.5f, 60f))
+        assertThat(size).isEqualTo(Size(37.5f, 60f))
     }
 
     @Test
@@ -83,10 +84,23 @@ class ScalingImageTest {
         val file = mockk<File>(relaxed = true)
         val image = ScalingImage.fromHeight(file, 20f)
         val size = image.render(context)
-        Assertions.assertThat(size).isEqualTo(Size(12.5f, 20f))
+        assertThat(size).isEqualTo(Size(12.5f, 20f))
         verify { PDImageXObject.createFromFileByContent(eq(file), any()) }
     }
 
+    @Test
+    fun scaleHeightWithCallToBlocks() {
+        mockContext()
+        mockImage()
+        val file = mockk<File>(relaxed = true)
+        val image = ScalingImage.fromHeight(file, 20f)
+        val blocks = image.getBlocks(context)
+        val size = image.render(context)
+        assertThat(size).isEqualTo(Size(12.5f, 20f))
+        assertThat(blocks.width).isEqualTo(12.5f)
+        assertThat(blocks.heightBlocks).isEqualTo(listOf(20f))
+        verify(exactly = 1) { PDImageXObject.createFromFileByContent(eq(file), any()) }
+    }
 
     private fun mockContext() {
         mockPageStreamSimple(pageStream, contentStream, DEFAULT_SIZE)
@@ -95,7 +109,8 @@ class ScalingImageTest {
             x = 0f,
             maxX = DEFAULT_SIZE,
             y = 0f,
-            style = Style.DEFAULT_STYLE
+            style = Style.DEFAULT_STYLE,
+            renderContext = generateRenderContext(DEFAULT_SIZE),
         )
     }
 

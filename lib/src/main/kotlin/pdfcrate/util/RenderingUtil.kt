@@ -3,7 +3,7 @@ package pdfcrate.util
 import org.apache.pdfbox.pdmodel.font.PDFont
 
 
-class RenderingUtil {
+class RenderingUtil private constructor(){
     companion object {
         @JvmStatic
         val WHITESPACE_REGEX = Regex("\\s")

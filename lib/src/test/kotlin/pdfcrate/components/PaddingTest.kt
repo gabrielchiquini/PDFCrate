@@ -11,6 +11,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import pdfcrate.document.Style
 import pdfcrate.render.ComponentContext
 import pdfcrate.render.PageStream
+import pdfcrate.testutil.generateRenderContext
 import pdfcrate.testutil.mockPageStreamSimple
 import pdfcrate.util.Edges
 import pdfcrate.util.Size
@@ -102,7 +103,8 @@ class PaddingTest {
             x = 0f,
             maxX = DEFAULT_SIZE,
             y = 0f,
-            style = Style.DEFAULT_STYLE
+            style = Style.DEFAULT_STYLE,
+            renderContext = generateRenderContext(DEFAULT_SIZE),
         )
     }
 }

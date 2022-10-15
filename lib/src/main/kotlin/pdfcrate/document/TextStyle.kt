@@ -7,7 +7,6 @@ import java.awt.Color
 class TextStyle(
     val font: PDFont, val fontSize: Float, val textColor: Color, val leading: Float
 ) {
-
     constructor(
         font: PDFont? = null, fontSize: Float? = null, textColor: Color? = null, leading: Float? = null,
     ) : this(
@@ -24,12 +23,12 @@ class TextStyle(
         leading = builder.leading,
     )
 
-    class Builder {
-        internal var font: PDFont? = null
-        internal var fontSize: Float? = null
-        internal var textColor: Color? = null
-        internal var leading: Float? = null
-
+    class Builder(
+        var font: PDFont? = null,
+        var fontSize: Float? = null,
+        var textColor: Color? = null,
+        var leading: Float? = null,
+    ) {
         fun font(value: PDFont?) = apply { this.font = value }
         fun fontSize(value: Float?) = apply { this.fontSize = value }
         fun textColor(value: Color?) = apply { this.textColor = value }
@@ -38,14 +37,19 @@ class TextStyle(
 
     }
 
+    fun toBuilder(): Builder {
+        return Builder(
+            font = font, fontSize = fontSize, textColor = textColor, leading = leading,
+        )
+    }
+
     companion object {
-        @JvmStatic
+        @JvmField
         val DEFAULT_STYLE =
             TextStyle(font = PDType1Font.HELVETICA, fontSize = 13f, textColor = Color.BLACK, leading = 1f)
 
         @JvmStatic
         fun builder() = Builder()
-
     }
 
 }

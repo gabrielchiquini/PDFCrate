@@ -3,7 +3,7 @@ package pdfcrate.components
 import pdfcrate.render.ComponentContext
 import pdfcrate.util.Edges
 import pdfcrate.util.Size
-import pdfcrate.util.SpacingStyle
+import pdfcrate.util.Sizing
 
 class Table(private val data: Array<Array<SizedComponent>>, private val columns: Array<TableColumn>) : Component {
     override fun render(context: ComponentContext): Size {
@@ -39,24 +39,24 @@ class Table(private val data: Array<Array<SizedComponent>>, private val columns:
         var proportionalRatioBase = 0f
         for ((i, column) in columns.withIndex()) {
             when (column.sizing.style) {
-                SpacingStyle.SHRINK -> {
+                Sizing.SHRINK -> {
                     val width = getShrinkWidth(context, i) + (column.padding?.horizontalSize() ?: 0f)
                     widths[i] = width
                     absoluteSize += width
                 }
 
-                SpacingStyle.ABSOLUTE -> {
+                Sizing.ABSOLUTE -> {
                     val width = column.sizing.value + (column.padding?.horizontalSize() ?: 0f)
                     widths[i] = width
                     absoluteSize += width
                 }
 
-                SpacingStyle.PROPORTIONAL -> proportionalRatioBase += column.sizing.value
+                Sizing.PROPORTIONAL -> proportionalRatioBase += column.sizing.value
             }
         }
         val remaining = context.width() - absoluteSize
         columns.withIndex()
-            .filter { it.value.sizing.style == SpacingStyle.PROPORTIONAL }
+            .filter { it.value.sizing.style == Sizing.PROPORTIONAL }
             .forEach {
                 widths[it.index] = it.value.sizing.value / proportionalRatioBase * remaining
             }
@@ -68,6 +68,24 @@ class Table(private val data: Array<Array<SizedComponent>>, private val columns:
     }
 }
 
-class TableColumn @JvmOverloads constructor(val sizing: ColumnSizing, val padding: Edges? = null)
+class TableColumn private constructor(val sizing: ColumnSizing, val padding: Edges? = null) {
+    companion object {
+        @JvmStatic
+        @JvmOverloads
+        fun proportional(size: Float, padding: Edges? = null) =
+            TableColumn(ColumnSizing(Sizing.PROPORTIONAL, size), padding)
 
-data class ColumnSizing(val style: SpacingStyle, val value: Float)
+        @JvmStatic
+        @JvmOverloads
+        fun absolute(size: Float, padding: Edges? = null) =
+            TableColumn(ColumnSizing(Sizing.ABSOLUTE, size), padding)
+
+        @JvmStatic
+        @JvmOverloads
+        fun shrink(padding: Edges? = null) =
+            TableColumn(ColumnSizing(Sizing.SHRINK, 0f), padding)
+
+    }
+}
+
+data class ColumnSizing(val style: Sizing, val value: Float)

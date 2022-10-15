@@ -38,6 +38,7 @@ class SimpleText @JvmOverloads constructor(
         val y = wrapper.realOffset - leading
         wrapper.stream.newLineAtOffset(context.x, y)
         wrapper.stream.setFont(font, style.fontSize)
+        wrapper.stream.setNonStrokingColor(style.textColor)
         lines.forEachIndexed { i, line ->
             val oldWrapper = wrapper
             if (i > 0) {

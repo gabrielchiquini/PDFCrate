@@ -58,7 +58,7 @@ class Lines(
             wrapper.stream.moveTo(x, y)
         }
         wrapper.stream.stroke()
-        return Size(width, height)
+        return Size(width, wrapper.virtualOffset + height - context.y)
 
     }
 

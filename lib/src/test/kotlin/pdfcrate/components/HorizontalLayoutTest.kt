@@ -9,10 +9,11 @@ import org.junit.jupiter.api.extension.ExtendWith
 import pdfcrate.document.Style
 import pdfcrate.render.ComponentContext
 import pdfcrate.render.PageStream
+import pdfcrate.testutil.generateRenderContext
 import pdfcrate.testutil.verifyComponentContext
 import pdfcrate.util.Edges
 import pdfcrate.util.Size
-import pdfcrate.util.SpacingStyle
+import pdfcrate.util.Sizing
 
 private const val DEFAULT_SIZE = 100f
 private const val DEFAULT_COMPONENT_WIDTH = 20f
@@ -20,7 +21,7 @@ private const val DEFAULT_COMPONENT_HEIGHT = 30f
 private val DEFAULT_COMPONENT_SIZE = Size(DEFAULT_COMPONENT_WIDTH, DEFAULT_COMPONENT_HEIGHT)
 
 @ExtendWith(MockKExtension::class)
-class ColumnLayoutTest {
+class HorizontalLayoutTest {
     @MockK
     lateinit var pageStream: PageStream
 
@@ -28,9 +29,11 @@ class ColumnLayoutTest {
     fun singleColumnNoPadding() {
         val component = component()
         val context = componentContext()
-        val columnLayout =
-            ColumnLayout(listOf(component), listOf(ColumnConstraints(style = SpacingStyle.PROPORTIONAL, value = 1f)))
-        val rendered = columnLayout.render(context)
+        val horizontalLayout =
+            HorizontalLayout(
+                listOf(HorizontalLayoutColumn(style = Sizing.PROPORTIONAL, size = 1f, child = component))
+            )
+        val rendered = horizontalLayout.render(context)
         assertThat(rendered).isEqualTo(Size(DEFAULT_SIZE, DEFAULT_COMPONENT_HEIGHT))
         val innerContext = slot<ComponentContext>()
         verify { component.render(capture(innerContext)) }
@@ -41,11 +44,17 @@ class ColumnLayoutTest {
     fun singleColumnWithPadding() {
         val component = component()
         val context = componentContext()
-        val columnLayout = ColumnLayout(
-            listOf(component),
-            listOf(ColumnConstraints(style = SpacingStyle.PROPORTIONAL, value = 1f, padding = Edges(1f, 2f, 3f, 4f)))
+        val horizontalLayout = HorizontalLayout(
+            listOf(
+                HorizontalLayoutColumn(
+                    style = Sizing.PROPORTIONAL,
+                    size = 1f,
+                    padding = Edges(1f, 2f, 3f, 4f),
+                    child = component
+                )
+            )
         )
-        val rendered = columnLayout.render(context)
+        val rendered = horizontalLayout.render(context)
         assertThat(rendered).isEqualTo(Size(DEFAULT_SIZE, DEFAULT_COMPONENT_HEIGHT + 4f))
         val innerContext = slot<ComponentContext>()
         verify { component.render(capture(innerContext)) }
@@ -57,14 +66,19 @@ class ColumnLayoutTest {
     fun multipleColumnProportional() {
         val component = component()
         val context = componentContext()
-        val columnLayout = ColumnLayout(
-            listOf(component, component, component), listOf(
-                ColumnConstraints(style = SpacingStyle.PROPORTIONAL, value = 1f),
-                ColumnConstraints(style = SpacingStyle.PROPORTIONAL, value = 2f, padding = Edges(1f, 2f, 3f, 4f)),
-                ColumnConstraints(style = SpacingStyle.PROPORTIONAL, value = 3f),
+        val horizontalLayout = HorizontalLayout(
+            listOf(
+                HorizontalLayoutColumn(style = Sizing.PROPORTIONAL, size = 1f, child = component),
+                HorizontalLayoutColumn(
+                    style = Sizing.PROPORTIONAL,
+                    size = 2f,
+                    padding = Edges(1f, 2f, 3f, 4f),
+                    child = component
+                ),
+                HorizontalLayoutColumn(style = Sizing.PROPORTIONAL, size = 3f, child = component),
             )
         )
-        val rendered = columnLayout.render(context)
+        val rendered = horizontalLayout.render(context)
         assertThat(rendered).isEqualTo(Size(DEFAULT_SIZE, DEFAULT_COMPONENT_HEIGHT + 4f))
         val innerContext1 = slot<ComponentContext>()
         val innerContext2 = slot<ComponentContext>()
@@ -83,14 +97,19 @@ class ColumnLayoutTest {
     fun multipleColumnAbsolute() {
         val component = component()
         val context = componentContext()
-        val columnLayout = ColumnLayout(
-            listOf(component, component, component), listOf(
-                ColumnConstraints(style = SpacingStyle.ABSOLUTE, value = 30f),
-                ColumnConstraints(style = SpacingStyle.ABSOLUTE, value = 30f, padding = Edges(1f, 2f, 3f, 4f)),
-                ColumnConstraints(style = SpacingStyle.ABSOLUTE, value = 30f),
+        val horizontalLayout = HorizontalLayout(
+            listOf(
+                HorizontalLayoutColumn(style = Sizing.ABSOLUTE, size = 30f, child = component),
+                HorizontalLayoutColumn(
+                    style = Sizing.ABSOLUTE,
+                    size = 30f,
+                    padding = Edges(1f, 2f, 3f, 4f),
+                    child = component
+                ),
+                HorizontalLayoutColumn(style = Sizing.ABSOLUTE, size = 30f, child = component),
             )
         )
-        val rendered = columnLayout.render(context)
+        val rendered = horizontalLayout.render(context)
         assertThat(rendered).isEqualTo(Size(DEFAULT_SIZE, DEFAULT_COMPONENT_HEIGHT + 4f))
         val innerContext1 = slot<ComponentContext>()
         val innerContext2 = slot<ComponentContext>()
@@ -106,17 +125,21 @@ class ColumnLayoutTest {
     }
 
     @Test
-    fun multipleColumnMixed() {
+    fun multipleColumnMixedWithBuilder() {
         val component = component()
         val context = componentContext()
-        val columnLayout = ColumnLayout(
-            listOf(component, component, component), listOf(
-                ColumnConstraints(style = SpacingStyle.PROPORTIONAL, value = 1f, padding = Edges(1f, 2f, 3f, 4f)),
-                ColumnConstraints(style = SpacingStyle.ABSOLUTE, value = 40f),
-                ColumnConstraints(style = SpacingStyle.PROPORTIONAL, value = 3f),
+        val horizontalLayout = HorizontalLayout(
+            listOf(
+                HorizontalLayoutColumn.builder().size(1f)
+                    .padding(Edges(1f, 2f, 3f, 4f))
+                    .child(component)
+                    .style(Sizing.PROPORTIONAL)
+                    .build(),
+                HorizontalLayoutColumn.builder().style(Sizing.ABSOLUTE).size(40f).child(component).build(),
+                HorizontalLayoutColumn.builder().style(Sizing.PROPORTIONAL).size(3f).child(component).build(),
             )
         )
-        val rendered = columnLayout.render(context)
+        val rendered = horizontalLayout.render(context)
         assertThat(rendered).isEqualTo(Size(DEFAULT_SIZE, DEFAULT_COMPONENT_HEIGHT + 4f))
         val innerContext1 = slot<ComponentContext>()
         val innerContext2 = slot<ComponentContext>()
@@ -144,5 +167,6 @@ class ColumnLayoutTest {
         y = 0f,
         style = Style.DEFAULT_STYLE,
         pages = pageStream,
+        renderContext = generateRenderContext(DEFAULT_SIZE),
     )
 }

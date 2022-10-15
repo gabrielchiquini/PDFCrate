@@ -1,8 +1,8 @@
 package pdfcrate.document
 
 class Style(
-    val textStyle: TextStyle,
-    val lineStyle: LineStyle,
+    var textStyle: TextStyle,
+    var lineStyle: LineStyle,
 ) {
     companion object {
         @JvmStatic

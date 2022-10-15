@@ -10,9 +10,9 @@ import org.junit.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import pdfcrate.document.Style
 import pdfcrate.document.TextStyle
-import pdfcrate.render.Alignment
 import pdfcrate.render.ComponentContext
 import pdfcrate.render.PageStream
+import pdfcrate.testutil.generateRenderContext
 import pdfcrate.testutil.mockPageStreamSimple
 
 private const val DEFAULT_SIZE = 500f
@@ -32,7 +32,7 @@ class FlexibleTextTest {
     fun writeFlexTextNoScaling() {
         mockContext()
         val fontSize = 20f
-        val size = FlexibleText(TEST_TEXT, Alignment.LEFT, TextStyle(fontSize = fontSize)).render(context)
+        val size = FlexibleText(TEST_TEXT, TextStyle(fontSize = fontSize)).render(context)
         assertThat(size.width).isLessThan(DEFAULT_SIZE)
         assertThat(size.height).isEqualTo(fontSize)
         verify { pageStream.contentStreamFor(eq(0f), eq(fontSize)) }
@@ -42,45 +42,34 @@ class FlexibleTextTest {
     }
 
     @Test
+    fun getBlocksNoScaling() {
+        mockContext()
+        val fontSize = 20f
+        val size = FlexibleText(TEST_TEXT, TextStyle(fontSize = fontSize)).getBlocks(context)
+        assertThat(size.width).isLessThan(DEFAULT_SIZE)
+        assertThat(size.heightBlocks).isEqualTo(listOf(fontSize))
+    }
+
+    @Test
     fun writeFlexTextDownscaled() {
         mockContext()
         val fontSize = 2000f
-        val size = FlexibleText(TEST_TEXT, Alignment.LEFT, TextStyle(fontSize = fontSize)).render(context)
-        assertThat(size.height).isLessThan(fontSize)
+        val size = FlexibleText(TEST_TEXT, TextStyle(fontSize = fontSize)).render(context)
+        assertThat(size.height).isEqualTo(fontSize)
         assertThat(size.width).isEqualTo(DEFAULT_SIZE)
         verify { pageStream.contentStreamFor(eq(0f), eq(size.height)) }
         verify { contentStream.newLineAtOffset(eq(0f), any()) }
         verifyShowText()
     }
 
-    @Test
-    fun writeFlexTextCentered() {
-        mockContext()
-        val fontSize = 20f
-        val size = FlexibleText(TEST_TEXT, Alignment.CENTER, TextStyle(fontSize = fontSize)).render(context)
-        assertThat(size.height).isEqualTo(fontSize)
-        assertThat(size.width).isEqualTo(DEFAULT_SIZE)
-        verify { pageStream.contentStreamFor(eq(0f), eq(fontSize)) }
-        verify { contentStream.newLineAtOffset(neq(0f), eq(DEFAULT_SIZE - fontSize)) }
-        verifyShowText()
-    }
 
     @Test
-    fun getTextSizeCenter() {
+    fun getBlocksDownscaled() {
         mockContext()
-        val fontSize = 20f
-        val size = FlexibleText(TEST_TEXT, Alignment.CENTER, TextStyle(fontSize = fontSize)).getBlocks(context)
-        assertThat(size.heightBlocks).hasSize(1).allMatch { it == fontSize }
+        val fontSize = 500f
+        val size = FlexibleText(TEST_TEXT, TextStyle(fontSize = fontSize)).getBlocks(context)
         assertThat(size.width).isEqualTo(DEFAULT_SIZE)
-    }
-
-    @Test
-    fun getTextSizeLeft() {
-        mockContext()
-        val fontSize = 20f
-        val size = FlexibleText(TEST_TEXT, Alignment.LEFT, TextStyle(fontSize = fontSize)).getBlocks(context)
-        assertThat(size.heightBlocks).hasSize(1).allMatch { it == fontSize }
-        assertThat(size.width).isLessThan(DEFAULT_SIZE)
+        assertThat(size.heightBlocks).isEqualTo(listOf(fontSize))
     }
 
     private fun verifyShowText() {
@@ -88,7 +77,6 @@ class FlexibleTextTest {
         verify { contentStream.beginText() }
         verify { contentStream.endText() }
     }
-
 
     private fun mockContext() {
         pageStream = mockk()
@@ -99,7 +87,8 @@ class FlexibleTextTest {
             x = 0f,
             maxX = DEFAULT_SIZE,
             y = 0f,
-            style = Style.DEFAULT_STYLE
+            style = Style.DEFAULT_STYLE,
+            renderContext = generateRenderContext(DEFAULT_SIZE),
         )
     }
 }

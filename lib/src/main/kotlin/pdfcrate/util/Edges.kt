@@ -1,6 +1,6 @@
 package pdfcrate.util
 
-class Edges(val top: Float, val right: Float, val bottom: Float, val left: Float) {
+class Edges(val top: Float = 0f, val right: Float = 0f, val bottom: Float = 0f, val left: Float = 0f) {
     companion object {
         @JvmStatic
         val ZERO = all(0f)
@@ -14,5 +14,9 @@ class Edges(val top: Float, val right: Float, val bottom: Float, val left: Float
 
     fun horizontalSize(): Float {
         return left + right
+    }
+
+    fun verticalSize(): Float {
+        return top + bottom
     }
 }

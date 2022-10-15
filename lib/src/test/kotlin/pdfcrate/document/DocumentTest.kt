@@ -45,8 +45,8 @@ class DocumentTest {
     fun renderSingleElement() {
         mockBasicComponent()
         val document = Document()
-        document.size = Size(DEFAULT_SIZE, DEFAULT_SIZE)
-        document.margin = Edges.symmetric(10f, 10f)
+        document.size(Size(DEFAULT_SIZE, DEFAULT_SIZE))
+            .margin(Edges.symmetric(10f, 10f))
         document.add(component)
         document.render(outputStream)
         val context = slot<ComponentContext>()
@@ -58,8 +58,7 @@ class DocumentTest {
     fun renderTwoElements() {
         mockBasicComponent()
         val document = Document()
-        document.size = Size(DEFAULT_SIZE, DEFAULT_SIZE)
-        document.margin = Edges.symmetric(10f, 10f)
+        document.size(Size(DEFAULT_SIZE, DEFAULT_SIZE)).margin(Edges.symmetric(10f, 10f))
         document.add(component)
         document.add(component)
         document.render(outputStream)
@@ -75,7 +74,7 @@ class DocumentTest {
     fun renderTwoElementsNoMargin() {
         mockBasicComponent()
         val document = Document()
-        document.size = Size(DEFAULT_SIZE, DEFAULT_SIZE)
+        document.size(Size(DEFAULT_SIZE, DEFAULT_SIZE))
         document.add(component)
         document.add(component)
         document.render(outputStream)

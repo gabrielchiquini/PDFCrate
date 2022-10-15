@@ -20,7 +20,8 @@ class PageStream(val document: PDDocument, private val context: RenderContext) {
         val page = floor(virtualY / contentHeight).toInt()
         val offsetFromPage = virtualY % contentHeight
 
-        if (offsetFromPage + height > contentHeight) {
+        // avoid rounding problems in subpixels
+        if (offsetFromPage + height > contentHeight + 0.1) {
             val newPage = page + 1
             assertPageSize(newPage)
             return ContentStreamWrapper(

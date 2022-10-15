@@ -8,12 +8,12 @@ import org.junit.jupiter.api.extension.ExtendWith
 import pdfcrate.document.Style
 import pdfcrate.render.ComponentContext
 import pdfcrate.render.PageStream
+import pdfcrate.testutil.generateRenderContext
 import pdfcrate.testutil.mockPageStreamReal
 import pdfcrate.testutil.verifyComponentContext
 import pdfcrate.util.Edges
 import pdfcrate.util.Size
 import pdfcrate.util.SizeBlocks
-import pdfcrate.util.SpacingStyle
 
 private const val DEFAULT_SIZE = 500f
 private const val DEFAULT_COMPONENT_SIZE = 10f
@@ -32,7 +32,7 @@ class TableTest {
         val component2 = mockComponent()
         val size = Table(
             arrayOf(arrayOf(component1), arrayOf(component2)),
-            arrayOf(TableColumn(ColumnSizing(SpacingStyle.PROPORTIONAL, 1f)))
+            arrayOf(TableColumn.proportional(1f))
         ).render(context)
         assertThat(size).isEqualTo(Size(context.width(), DEFAULT_COMPONENT_SIZE * 2))
         verifyRender(component1, x = 0f, maxX = DEFAULT_SIZE, y = 0f)
@@ -46,7 +46,9 @@ class TableTest {
         val component2 = mockComponent()
         val size = Table(
             arrayOf(arrayOf(component1), arrayOf(component2)),
-            arrayOf(TableColumn(ColumnSizing(SpacingStyle.PROPORTIONAL, 1f), Edges(1f, 2f, 3f, 4f)))
+            arrayOf(
+                TableColumn.proportional(1f, Edges(1f, 2f, 3f, 4f))
+            )
         ).render(context)
         assertThat(size).isEqualTo(Size(context.width(), DEFAULT_COMPONENT_SIZE * 2 + 4 * 2))
         verifyRender(component1, x = 4f, maxX = DEFAULT_SIZE - 2f, y = 1f)
@@ -61,8 +63,8 @@ class TableTest {
         val size = Table(
             arrayOf(arrayOf(component1, component2)),
             arrayOf(
-                TableColumn(ColumnSizing(SpacingStyle.PROPORTIONAL, 2f)),
-                TableColumn(ColumnSizing(SpacingStyle.PROPORTIONAL, 3f))
+                TableColumn.proportional(2f),
+                TableColumn.proportional(3f)
             )
         ).render(context)
         assertThat(size).isEqualTo(Size(context.width(), DEFAULT_COMPONENT_SIZE))
@@ -78,8 +80,8 @@ class TableTest {
         val size = Table(
             arrayOf(arrayOf(component1, component2)),
             arrayOf(
-                TableColumn(ColumnSizing(SpacingStyle.ABSOLUTE, 20f)),
-                TableColumn(ColumnSizing(SpacingStyle.ABSOLUTE, 30f))
+                TableColumn.absolute(20f),
+                TableColumn.absolute(30f)
             )
         ).render(context)
         assertThat(size).isEqualTo(Size(context.width(), DEFAULT_COMPONENT_SIZE))
@@ -97,8 +99,8 @@ class TableTest {
         val size = Table(
             arrayOf(arrayOf(component1, component2), arrayOf(component3, component4)),
             arrayOf(
-                TableColumn(ColumnSizing(SpacingStyle.SHRINK, 0f)),
-                TableColumn(ColumnSizing(SpacingStyle.PROPORTIONAL, 1f))
+                TableColumn.shrink(),
+                TableColumn.proportional(1f)
             )
         ).render(context)
         assertThat(size).isEqualTo(Size(context.width(), 30f))
@@ -116,8 +118,8 @@ class TableTest {
         val size = Table(
             arrayOf(arrayOf(component1, component2)),
             arrayOf(
-                TableColumn(ColumnSizing(SpacingStyle.SHRINK, 0f), Edges(1f, 2f, 3f, 4f)),
-                TableColumn(ColumnSizing(SpacingStyle.PROPORTIONAL, 1f))
+                TableColumn.shrink(Edges(1f, 2f, 3f, 4f)),
+                TableColumn.proportional(1f)
             )
         ).render(context)
         assertThat(size).isEqualTo(Size(context.width(), 14f))
@@ -136,8 +138,8 @@ class TableTest {
         val size = Table(
             arrayOf(arrayOf(component1, component2), arrayOf(component3, component4)),
             arrayOf(
-                TableColumn(ColumnSizing(SpacingStyle.SHRINK, 0f)),
-                TableColumn(ColumnSizing(SpacingStyle.PROPORTIONAL, 1f))
+                TableColumn.shrink(),
+                TableColumn.proportional(1f)
             )
         ).render(context)
         assertThat(size).isEqualTo(Size(context.width(), 500f))
@@ -157,8 +159,8 @@ class TableTest {
         val size = Table(
             arrayOf(arrayOf(component1, component2), arrayOf(component3, component4)),
             arrayOf(
-                TableColumn(ColumnSizing(SpacingStyle.ABSOLUTE, 100f)),
-                TableColumn(ColumnSizing(SpacingStyle.PROPORTIONAL, 1f))
+                TableColumn.absolute(100f),
+                TableColumn.proportional(1f)
             )
         ).render(context)
         assertThat(size).isEqualTo(Size(context.width(), 502f))
@@ -179,11 +181,11 @@ class TableTest {
         val size = Table(
             arrayOf(arrayOf(component1, component2, component3, component4, component5)),
             arrayOf(
-                TableColumn(ColumnSizing(SpacingStyle.ABSOLUTE, 150f)),
-                TableColumn(ColumnSizing(SpacingStyle.SHRINK, 0f)),
-                TableColumn(ColumnSizing(SpacingStyle.ABSOLUTE, 100f)),
-                TableColumn(ColumnSizing(SpacingStyle.PROPORTIONAL, 1f)),
-                TableColumn(ColumnSizing(SpacingStyle.PROPORTIONAL, 3f))
+                TableColumn.absolute(150f),
+                TableColumn.shrink(),
+                TableColumn.absolute(100f),
+                TableColumn.proportional(1f),
+                TableColumn.proportional(3f)
             )
         ).render(context)
         assertThat(size).isEqualTo(Size(context.width(), 45f))
@@ -223,7 +225,8 @@ class TableTest {
             x = 0f,
             maxX = DEFAULT_SIZE,
             y = 0f,
-            style = Style.DEFAULT_STYLE
+            style = Style.DEFAULT_STYLE,
+            renderContext = generateRenderContext(DEFAULT_SIZE),
         )
     }
 }

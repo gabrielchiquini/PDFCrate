@@ -11,6 +11,7 @@ import pdfcrate.document.LineStyle
 import pdfcrate.document.Style
 import pdfcrate.render.ComponentContext
 import pdfcrate.render.PageStream
+import pdfcrate.testutil.generateRenderContext
 import pdfcrate.testutil.mockPageStreamSimple
 import pdfcrate.util.Point
 import pdfcrate.util.Size
@@ -80,7 +81,12 @@ class LinesTest {
     private fun mockContext() {
         mockPageStreamSimple(pageStream, contentStream, DEFAULT_SIZE)
         context = ComponentContext(
-            pages = pageStream, x = 0f, maxX = DEFAULT_SIZE, y = 0f, style = Style.DEFAULT_STYLE
+            pages = pageStream,
+            x = 0f,
+            maxX = DEFAULT_SIZE,
+            y = 0f,
+            style = Style.DEFAULT_STYLE,
+            renderContext = generateRenderContext(DEFAULT_SIZE),
         )
     }
 }

@@ -14,6 +14,7 @@ import pdfcrate.document.TextStyle
 import pdfcrate.render.ComponentContext
 import pdfcrate.render.ContentStreamWrapper
 import pdfcrate.render.PageStream
+import pdfcrate.testutil.generateRenderContext
 
 private const val DEFAULT_SIZE = 500f
 private const val TEST_TEXT = "TESTING TEXT"
@@ -120,7 +121,8 @@ class SimpleTextTest {
             x = 0f,
             maxX = DEFAULT_SIZE,
             y = 0f,
-            style = Style.DEFAULT_STYLE
+            style = Style.DEFAULT_STYLE,
+            renderContext = generateRenderContext(DEFAULT_SIZE),
         )
     }
 }
