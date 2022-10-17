@@ -7,7 +7,17 @@ import pdfcrate.util.Size
 import pdfcrate.util.Sizing
 import kotlin.math.max
 
-class HorizontalLayout(private val columns: List<HorizontalLayoutColumn>) : Component {
+/**
+ * Renders elements in a column-based layout
+ *
+ * If the columns are too big for this page, they will continue in the next, in the same layout
+ *
+ * This component always use the full width of the parent container
+ *
+ * @see [HorizontalLayoutColumn]
+ */
+class HorizontalLayout(private vararg val columns: HorizontalLayoutColumn) : Component {
+    constructor(columns: List<HorizontalLayoutColumn>) : this(*columns.toTypedArray())
 
     override fun render(context: ComponentContext): Size {
         val availableSpace = context.maxX - context.x
@@ -59,7 +69,14 @@ class HorizontalLayout(private val columns: List<HorizontalLayoutColumn>) : Comp
     }
 }
 
-class HorizontalLayoutColumn constructor(
+/**
+ * Defines a column for [HorizontalLayout]
+ *
+ * The column has the child component, its size and, optionally, a padding
+ *
+ * @see [Sizing]
+ */
+class HorizontalLayoutColumn private constructor(
     val child: Component,
     val style: Sizing,
     val size: Float = 0f,
@@ -67,25 +84,13 @@ class HorizontalLayoutColumn constructor(
 ) {
     companion object {
         @JvmStatic
-        fun builder() = Builder()
-    }
-    constructor(builder: Builder) : this(
-        child = builder.child!!,
-        style = builder.style!!,
-        size = builder.size,
-        padding = builder.padding ?: Edges.ZERO,
-    )
+        @JvmOverloads
+        fun absolute(child: Component, size: Float, padding: Edges = Edges.ZERO) =
+            HorizontalLayoutColumn(child, Sizing.ABSOLUTE, size, padding)
 
-    class Builder {
-        var child: Component? = null
-        var style: Sizing? = null
-        var size: Float = 0f
-        var padding: Edges? = null
-
-        fun child(value: Component) = apply { this.child = value }
-        fun style(value: Sizing) = apply { this.style = value }
-        fun size(value: Float) = apply { this.size = value }
-        fun padding(value: Edges) = apply { this.padding = value }
-        fun build() = HorizontalLayoutColumn(this)
+        @JvmStatic
+        @JvmOverloads
+        fun proportional(child: Component, size: Float, padding: Edges = Edges.ZERO) =
+            HorizontalLayoutColumn(child, Sizing.PROPORTIONAL, size, padding)
     }
 }

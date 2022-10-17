@@ -5,7 +5,15 @@ import pdfcrate.util.Size
 import pdfcrate.util.SizeBlocks
 import kotlin.math.max
 
-class Row(private val children: List<SizedComponent>) : SizedComponent {
+/**
+ * Wraps multiple elements horizontally in the parent container
+ *
+ * It will always render the entire row in the same page, even if some child has multiple blocks
+ */
+class Row(private vararg val children: SizedComponent) : SizedComponent {
+
+    constructor(columns: List<SizedComponent>) : this(*columns.toTypedArray())
+
     override fun getBlocks(context: ComponentContext): SizeBlocks {
         var width = 0f
         var height = 0f

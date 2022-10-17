@@ -7,7 +7,9 @@ import pdfcrate.util.RenderingUtil.Companion.textWidth
 import pdfcrate.util.Size
 import pdfcrate.util.SizeBlocks
 
-
+/**
+ * Creates a block of text aligned to the left using the whole width of the parent, breaking lines when needed
+ */
 class Paragraph @JvmOverloads constructor(
     private val text: String, private val localStyle: TextStyle? = null
 ) : SizedComponent {

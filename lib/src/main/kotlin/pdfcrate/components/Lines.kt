@@ -8,6 +8,12 @@ import pdfcrate.util.Size
 import kotlin.math.max
 
 
+/**
+ * Draws line segments passing by all points described
+ *
+ * @param points The list of points where the points will be drawn.
+ *               Points coordinates are relative to the x and y in the rendering context
+ */
 class Lines(
     private val points: List<Point>,
     private val lineStyle: LineStyle? = null

@@ -4,8 +4,18 @@ import org.apache.pdfbox.pdmodel.font.PDFont
 import org.apache.pdfbox.pdmodel.font.PDType1Font
 import java.awt.Color
 
+/**
+ * Defines the text style to be used in the document or in a single component
+ * @property font The font to be used, must be added to the document with [pdfcrate.document.Document.loadFont]
+ * @property fontSize The font size in pixels (default: 13)
+ * @property textColor The text color (default: black)
+ * @property leading The line height relative to the font size. Line height is calculated as `leading * fontSize` (default: 1)
+ */
 class TextStyle(
-    val font: PDFont, val fontSize: Float, val textColor: Color, val leading: Float
+    val font: PDFont,
+    val fontSize: Float,
+    val textColor: Color,
+    val leading: Float
 ) {
     constructor(
         font: PDFont? = null, fontSize: Float? = null, textColor: Color? = null, leading: Float? = null,
@@ -37,6 +47,9 @@ class TextStyle(
 
     }
 
+    /**
+     * Returns a [Builder] instance with current style
+     */
     fun toBuilder(): Builder {
         return Builder(
             font = font, fontSize = fontSize, textColor = textColor, leading = leading,

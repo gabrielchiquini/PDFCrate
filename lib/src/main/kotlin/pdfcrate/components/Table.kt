@@ -5,7 +5,13 @@ import pdfcrate.util.Edges
 import pdfcrate.util.Size
 import pdfcrate.util.Sizing
 
+/**
+ * Dispose components in a 2D grid
+ */
 class Table(private val data: Array<Array<SizedComponent>>, private val columns: Array<TableColumn>) : Component {
+    constructor(data: List<List<SizedComponent>>, columns: List<TableColumn>)
+            : this(data.map { it.toTypedArray() }.toTypedArray(), columns.toTypedArray())
+
     override fun render(context: ComponentContext): Size {
         val columnsSize = getWidths(context)
         var heightUsed = 0f
@@ -38,7 +44,7 @@ class Table(private val data: Array<Array<SizedComponent>>, private val columns:
         var absoluteSize = 0f
         var proportionalRatioBase = 0f
         for ((i, column) in columns.withIndex()) {
-            when (column.sizing.style) {
+            when (column.style) {
                 Sizing.SHRINK -> {
                     val width = getShrinkWidth(context, i) + (column.padding?.horizontalSize() ?: 0f)
                     widths[i] = width
@@ -46,19 +52,19 @@ class Table(private val data: Array<Array<SizedComponent>>, private val columns:
                 }
 
                 Sizing.ABSOLUTE -> {
-                    val width = column.sizing.value + (column.padding?.horizontalSize() ?: 0f)
+                    val width = column.value + (column.padding?.horizontalSize() ?: 0f)
                     widths[i] = width
                     absoluteSize += width
                 }
 
-                Sizing.PROPORTIONAL -> proportionalRatioBase += column.sizing.value
+                Sizing.PROPORTIONAL -> proportionalRatioBase += column.value
             }
         }
         val remaining = context.width() - absoluteSize
         columns.withIndex()
-            .filter { it.value.sizing.style == Sizing.PROPORTIONAL }
+            .filter { it.value.style == Sizing.PROPORTIONAL }
             .forEach {
-                widths[it.index] = it.value.sizing.value / proportionalRatioBase * remaining
+                widths[it.index] = it.value.value / proportionalRatioBase * remaining
             }
         return widths
     }
@@ -68,24 +74,27 @@ class Table(private val data: Array<Array<SizedComponent>>, private val columns:
     }
 }
 
-class TableColumn private constructor(val sizing: ColumnSizing, val padding: Edges? = null) {
+/**
+ * Defines the column width and padding in a [Table]
+ *
+ * @see [Sizing]
+ */
+class TableColumn private constructor(val style: Sizing, val value: Float, val padding: Edges? = null) {
     companion object {
         @JvmStatic
         @JvmOverloads
         fun proportional(size: Float, padding: Edges? = null) =
-            TableColumn(ColumnSizing(Sizing.PROPORTIONAL, size), padding)
+            TableColumn(Sizing.PROPORTIONAL, size, padding)
 
         @JvmStatic
         @JvmOverloads
         fun absolute(size: Float, padding: Edges? = null) =
-            TableColumn(ColumnSizing(Sizing.ABSOLUTE, size), padding)
+            TableColumn(Sizing.ABSOLUTE, size, padding)
 
         @JvmStatic
         @JvmOverloads
         fun shrink(padding: Edges? = null) =
-            TableColumn(ColumnSizing(Sizing.SHRINK, 0f), padding)
-
+            TableColumn(Sizing.SHRINK, 0f, padding)
     }
 }
 
-data class ColumnSizing(val style: Sizing, val value: Float)

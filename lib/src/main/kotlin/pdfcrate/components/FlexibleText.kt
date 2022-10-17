@@ -7,7 +7,11 @@ import pdfcrate.util.Size
 import pdfcrate.util.SizeBlocks
 import kotlin.math.min
 
-
+/**
+ * Renders a single-line block of text, reducing font size to fit in the container width, if needed
+ *
+ * If the text contains a line break, it will give an error in the rendering process
+ */
 class FlexibleText @JvmOverloads constructor(
     private val text: String,
     private val localStyle: TextStyle? = null,

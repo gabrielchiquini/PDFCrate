@@ -1,14 +1,17 @@
 package pdfcrate.components
 
 import pdfcrate.render.ComponentContext
-import pdfcrate.util.SizeBlocks
 import pdfcrate.util.Edges
 import pdfcrate.util.Size
+import pdfcrate.util.SizeBlocks
 
-class Padding(private val inner: SizedComponent, private val padding: Edges) : SizedComponent {
-    private val delegate = UnsizedPadding(inner, padding)
+/**
+ * Adds blank space in the edges of the child component
+ */
+class Padding(private val child: SizedComponent, private val padding: Edges) : SizedComponent {
+    private val delegate = UnsizedPadding(child, padding)
     override fun getBlocks(context: ComponentContext): SizeBlocks {
-        val innerBlocks = inner.getBlocks(
+        val innerBlocks = child.getBlocks(
             context.withLimits(
                 x = context.x + padding.left,
                 maxX = context.maxX - padding.right,
@@ -27,6 +30,9 @@ class Padding(private val inner: SizedComponent, private val padding: Edges) : S
     }
 }
 
+/**
+ * Unsized version of [Padding]
+ */
 class UnsizedPadding(private val inner: Component, private val padding: Edges) : Component {
     override fun render(context: ComponentContext): Size {
         val rendered = inner.render(

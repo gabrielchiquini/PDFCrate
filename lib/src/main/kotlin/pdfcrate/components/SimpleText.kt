@@ -7,7 +7,12 @@ import pdfcrate.util.Size
 import pdfcrate.util.SizeBlocks
 import kotlin.math.max
 
-
+/**
+ * Adds a multi-line block of text to the document
+ *
+ * This component does not soft-wrap lines and will exceed the parent component if too big,
+ * but it is faster. If you need soft-wrap, use [Paragraph]
+ */
 class SimpleText @JvmOverloads constructor(
     private val lines: List<String>,
     private val localStyle: TextStyle? = null

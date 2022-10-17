@@ -5,6 +5,9 @@ import pdfcrate.util.Size
 import pdfcrate.util.SizeBlocks
 import kotlin.math.max
 
+/**
+ * Center a child element in the parent container
+ */
 class Center(private val child: SizedComponent) : SizedComponent {
     override fun getBlocks(context: ComponentContext): SizeBlocks {
         val blocks = child.getBlocks(context)

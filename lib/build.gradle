@@ -9,6 +9,7 @@
 plugins {
     // Apply the org.jetbrains.kotlin.jvm Plugin to add support for Kotlin.
     id 'org.jetbrains.kotlin.jvm' version '1.7.20'
+    id "org.jetbrains.dokka" version "1.7.20"
 
     // Apply the java-library plugin for API and implementation separation.
     id 'java-library'
@@ -18,12 +19,19 @@ plugins {
 
 java {
     withSourcesJar()
-    withJavadocJar()
+}
+
+task javadocJar(type: Jar) {
+    dependsOn(dokkaHtml)
+    archiveClassifier.set("javadoc")
+    from(dokkaHtml.outputDirectory)
 }
 
 publishing {
     publications {
         mavenJava(MavenPublication) {
+            artifact javadocJar
+
             groupId = 'pdfcrate'
             artifactId = 'pdfcrate'
             version = '0.1.0'
@@ -56,6 +64,7 @@ repositories {
 }
 
 dependencies {
+    dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.7.20")
     // Align versions of all Kotlin components
     implementation platform('org.jetbrains.kotlin:kotlin-bom')
 

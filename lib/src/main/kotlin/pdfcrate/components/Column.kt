@@ -5,8 +5,14 @@ import pdfcrate.util.Size
 import pdfcrate.util.SizeBlocks
 import kotlin.math.max
 
-class Column(private val children: List<SizedComponent>) : SizedComponent {
-    private val delegate = UnsizedColumn(children)
+/**
+ * Wraps multiple elements vertically in the parent container
+ */
+class Column(private vararg val children: SizedComponent) : SizedComponent {
+
+    constructor(columns: List<SizedComponent>) : this(*columns.toTypedArray())
+
+    private val delegate = UnsizedColumn(*children)
 
     override fun getBlocks(context: ComponentContext): SizeBlocks {
         var width = 0f
@@ -26,7 +32,12 @@ class Column(private val children: List<SizedComponent>) : SizedComponent {
     }
 }
 
-class UnsizedColumn(private val children: List<Component>) : Component {
+/**
+ * Unsized version of [Column]
+ */
+class UnsizedColumn(private vararg val children: Component) : Component {
+    constructor(columns: List<Component>) : this(*columns.toTypedArray())
+
     override fun render(context: ComponentContext): Size {
         var y = context.y
         var maxWidth = 0f

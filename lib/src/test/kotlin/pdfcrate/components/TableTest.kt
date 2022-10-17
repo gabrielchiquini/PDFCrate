@@ -196,6 +196,32 @@ class TableTest {
         verifyRender(component5, x = 350f, maxX = 500f, y = 0f)
     }
 
+    @Test
+    fun testListConversion() {
+        mockContext()
+        val component1 = mockComponent()
+        val component2 = mockComponent(width = 50f)
+        val component3 = mockComponent()
+        val component4 = mockComponent(height = 45f)
+        val component5 = mockComponent()
+        val size = Table(
+            listOf(listOf(component1, component2, component3, component4, component5)),
+            listOf(
+                TableColumn.absolute(150f),
+                TableColumn.shrink(),
+                TableColumn.absolute(100f),
+                TableColumn.proportional(1f),
+                TableColumn.proportional(3f)
+            )
+        ).render(context)
+        assertThat(size).isEqualTo(Size(context.width(), 45f))
+        verifyRender(component1, x = 0f, maxX = 150f, y = 0f)
+        verifyRender(component2, x = 150f, maxX = 200f, y = 0f)
+        verifyRender(component3, x = 200f, maxX = 300f, y = 0f)
+        verifyRender(component4, x = 300f, maxX = 350f, y = 0f)
+        verifyRender(component5, x = 350f, maxX = 500f, y = 0f)
+    }
+
     private fun verifyRender(component: SizedComponent, x: Float, maxX: Float, y: Float) {
         val componentContext = slot<ComponentContext>()
         verify(atLeast = 1) {

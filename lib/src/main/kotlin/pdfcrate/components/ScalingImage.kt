@@ -6,6 +6,9 @@ import pdfcrate.util.Size
 import pdfcrate.util.SizeBlocks
 import java.io.File
 
+/**
+ * Embed an image to the document keeping its aspect ratio, using width or height to scale
+ */
 class ScalingImage private constructor(
     private val file: File? = null,
     private val content: ByteArray? = null,

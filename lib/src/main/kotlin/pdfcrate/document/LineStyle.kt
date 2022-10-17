@@ -2,6 +2,9 @@ package pdfcrate.document
 
 import java.awt.Color
 
+/**
+ * Define the style for strokes to be drawn
+ */
 class LineStyle(
     val dashPattern: FloatArray,
     val dashPhase: Float,
