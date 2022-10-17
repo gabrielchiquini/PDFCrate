@@ -8,7 +8,6 @@ import pdfcrate.document.TextStyle;
 import pdfcrate.util.Edges;
 import pdfcrate.util.Point;
 import pdfcrate.util.Size;
-import pdfcrate.util.Sizing;
 
 import java.awt.*;
 import java.io.File;
@@ -91,18 +90,12 @@ public class Main {
         .add(
             new HorizontalLayout(
                 List.of(
-                    HorizontalLayoutColumn.builder()
-                        .child(new FlexibleText("OLAOLAOLA", textStyle))
-                        .padding(Edges.symmetric(20, 30))
-                        .style(Sizing.ABSOLUTE)
-                        .size(100f)
-                        .build(),
-                    HorizontalLayoutColumn.builder()
-                        .child(new Column(List.of(new Paragraph(BASE), new Paragraph(BASE))))
-                        .style(Sizing.PROPORTIONAL)
-                        .size(1)
-                        .padding(Edges.symmetric(20, 10))
-                        .build())));
+                    HorizontalLayoutColumn.absolute(
+                        new FlexibleText("OLAOLAOLA", textStyle), 100f, Edges.symmetric(20, 30)),
+                    HorizontalLayoutColumn.proportional(
+                        new Column(List.of(new Paragraph(BASE), new Paragraph(BASE))),
+                        1,
+                        Edges.symmetric(20, 10)))));
     textStyle = TextStyle.builder().fontSize(32f).build();
     document.add(new Center(new FlexibleText("TEXT SIZE 32", textStyle))).add(new SimpleText(BASE));
     final var cellPadding = new Edges(0f, 10f, 10f, 0);
