@@ -4,7 +4,7 @@ A component-based library for PDF generation, using PDFBox internally
 
 It has components to render images, display word-wrapping text, display multiple columns and more
 
-
+Details about components usage in [javadoc](https://javadoc.jitpack.io/com/github/gabrielchiquini/PDFCrate/0.1.0/javadoc)
 
 ## Usage:
 
