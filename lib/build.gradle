@@ -14,9 +14,9 @@ java {
 }
 
 task javadocJar(type: Jar) {
-    dependsOn(dokkaHtml)
+    dependsOn(dokkaJavadoc)
     archiveClassifier.set("javadoc")
-    from(dokkaHtml.outputDirectory)
+    from(dokkaJavadoc.outputDirectory)
 }
 
 publishing {
@@ -56,7 +56,7 @@ repositories {
 }
 
 dependencies {
-    dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.7.20")
+    dokkaJavadocPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.7.20")
     // Align versions of all Kotlin components
     implementation platform('org.jetbrains.kotlin:kotlin-bom')
 
