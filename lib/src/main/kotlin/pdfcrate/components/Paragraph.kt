@@ -15,12 +15,12 @@ class Paragraph @JvmOverloads constructor(
 ) : SizedComponent {
     override fun getBlocks(context: ComponentContext): SizeBlocks {
         val lines = getLines(context)
-        return SimpleText(lines, getStyle(context)).getBlocks(context)
+        return Text(lines, getStyle(context)).getBlocks(context)
     }
 
     override fun render(context: ComponentContext): Size {
         val lines = getLines(context)
-        return SimpleText(lines, getStyle(context)).render(context)
+        return Text(lines, getStyle(context)).render(context)
     }
 
     private fun getLines(

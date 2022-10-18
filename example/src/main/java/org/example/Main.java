@@ -83,7 +83,7 @@ public class Main {
                         .build())
                 .build())
         .add(new Paragraph(BASE))
-        .add(new Padding(new SimpleText(BASE), Edges.all(60)));
+        .add(new Padding(new Text(BASE), Edges.all(60)));
     var textStyle = TextStyle.builder().fontSize(100f).build();
     document
         .add(new FlexibleText("TEXT SIZE 100", textStyle))
@@ -97,7 +97,7 @@ public class Main {
                         1,
                         Edges.symmetric(20, 10)))));
     textStyle = TextStyle.builder().fontSize(32f).build();
-    document.add(new Center(new FlexibleText("TEXT SIZE 32", textStyle))).add(new SimpleText(BASE));
+    document.add(new Center(new FlexibleText("TEXT SIZE 32", textStyle))).add(new Text(BASE));
     final var cellPadding = new Edges(0f, 10f, 10f, 0);
     document
         .add(
@@ -106,7 +106,7 @@ public class Main {
                   {
                     new FlexibleText("TESTING TESTING:"),
                     new FlexibleText("TESTING TESTED"),
-                    new SimpleText("WHAT ABOUT\nWRAPPING LINES\nINSIDE TABLES")
+                    new Text("WHAT ABOUT\nWRAPPING LINES\nINSIDE TABLES")
                   },
                   {
                     new FlexibleText("TESTING TESTING 341:"),
@@ -115,12 +115,12 @@ public class Main {
                   },
                   {
                     Lines.builder().points(path).build(),
-                    new SimpleText("THAT TEXT IS TOO BIG TO FIT IN ONLY 200 pixels"),
+                    new Text("THAT TEXT IS TOO BIG TO FIT IN ONLY 200 pixels"),
                     new FlexibleText("TEST TESTING, TESTED")
                   },
                   {
                     Lines.builder().points(path).build(),
-                    new SimpleText("THAT TEXT IS TOO BIG TO FIT IN ONLY 200 pixels"),
+                    new Text("THAT TEXT IS TOO BIG TO FIT IN ONLY 200 pixels"),
                     new FlexibleText("TEST TESTING, TESTED")
                   }
                 },

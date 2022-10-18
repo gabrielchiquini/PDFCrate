@@ -14,7 +14,7 @@ class LineStyle(
 ) {
 
     companion object {
-        @JvmStatic
+        @JvmField
         val DEFAULT_STYLE = LineStyle(
             dashPattern = floatArrayOf(),
             dashPhase = 0f,
@@ -49,12 +49,22 @@ class LineStyle(
         color = builder.color,
     )
 
-    class Builder {
-        var dashPattern: FloatArray? = null
-        var dashPhase: Float? = null
-        var capStyle: Int? = null
-        var width: Float? = null
+    fun toBuilder() = Builder(this)
+
+    class Builder(
+        var dashPattern: FloatArray? = null,
+        var dashPhase: Float? = null,
+        var capStyle: Int? = null,
+        var width: Float? = null,
         var color: Color? = null
+    ) {
+        constructor(lineStyle: LineStyle) : this(
+            dashPattern = lineStyle.dashPattern,
+            dashPhase = lineStyle.dashPhase,
+            capStyle = lineStyle.capStyle,
+            width = lineStyle.width,
+            color = lineStyle.color,
+        )
 
         fun dashPattern(value: FloatArray) = apply { this.dashPattern = value }
         fun dashPhase(value: Float) = apply { this.dashPhase = value }

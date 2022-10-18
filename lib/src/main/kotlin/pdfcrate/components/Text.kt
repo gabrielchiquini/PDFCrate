@@ -13,7 +13,7 @@ import kotlin.math.max
  * This component does not soft-wrap lines and will exceed the parent component if too big,
  * but it is faster. If you need soft-wrap, use [Paragraph]
  */
-class SimpleText @JvmOverloads constructor(
+class Text @JvmOverloads constructor(
     private val lines: List<String>,
     private val localStyle: TextStyle? = null
 ) : SizedComponent {

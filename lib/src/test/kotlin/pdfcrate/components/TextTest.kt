@@ -22,7 +22,7 @@ private const val TEST_TEXT = "TESTING TEXT"
 private const val DEFAULT_FONT_SIZE = 13f
 
 @ExtendWith(MockKExtension::class)
-class SimpleTextTest {
+class TextTest {
     @MockK
     lateinit var pageStream: PageStream
 
@@ -35,7 +35,7 @@ class SimpleTextTest {
     fun writeSingleLine() {
         mockContext()
         val fontSize = DEFAULT_FONT_SIZE
-        val size = SimpleText(TEST_TEXT, TextStyle(fontSize = fontSize)).render(context)
+        val size = Text(TEST_TEXT, TextStyle(fontSize = fontSize)).render(context)
         assertThat(size.width).isLessThan(DEFAULT_SIZE)
         assertThat(size.height).isEqualTo(fontSize)
         verify { pageStream.contentStreamFor(eq(0f), eq(fontSize)) }
@@ -51,7 +51,7 @@ class SimpleTextTest {
         mockContext()
         val fontSize = DEFAULT_FONT_SIZE
         val text = "$TEST_TEXT\n$TEST_TEXT\n$TEST_TEXT"
-        val size = SimpleText(text, TextStyle(fontSize = fontSize)).render(context)
+        val size = Text(text, TextStyle(fontSize = fontSize)).render(context)
         assertThat(size.width).isLessThan(DEFAULT_SIZE)
         assertThat(size.height).isEqualTo(fontSize * 3)
         verify { pageStream.contentStreamFor(eq(0f), eq(fontSize)) }
@@ -70,7 +70,7 @@ class SimpleTextTest {
         for (i in 0..50) {
             text += "$TEST_TEXT\n"
         }
-        val size = SimpleText(text, TextStyle(fontSize = fontSize)).render(context)
+        val size = Text(text, TextStyle(fontSize = fontSize)).render(context)
         assertThat(size.width).isLessThan(DEFAULT_SIZE)
         assertThat(size.height).isGreaterThan(DEFAULT_SIZE)
         verify { pageStream.contentStreamFor(eq(0f), eq(fontSize)) }
@@ -83,7 +83,7 @@ class SimpleTextTest {
         mockContext()
         val fontSize = DEFAULT_FONT_SIZE
         val text = "$TEST_TEXT\n$TEST_TEXT\n"
-        val size = SimpleText(text, TextStyle(fontSize = fontSize)).getBlocks(context)
+        val size = Text(text, TextStyle(fontSize = fontSize)).getBlocks(context)
         assertThat(size.heightBlocks).hasSize(3)
         assertThat(size.heightBlocks).allMatch { it == fontSize }
     }
