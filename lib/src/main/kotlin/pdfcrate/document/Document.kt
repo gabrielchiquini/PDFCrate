@@ -89,7 +89,7 @@ class Document {
      *
      * This function must be called once for the object, because the [PDDocument] instance is kept
      *
-     * All content streams are closed in the end
+     * The document is closed in the end
      */
     fun render(outputStream: OutputStream) {
         val context = RenderContext(
@@ -115,6 +115,7 @@ class Document {
         }
         pages.close()
         document.save(outputStream)
+        outputStream.close()
+        document.close()
     }
-
 }

@@ -6,9 +6,7 @@ import io.mockk.junit5.MockKExtension
 import org.apache.pdfbox.pdmodel.PDPageContentStream
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.extension.ExtendWith
 import pdfcrate.document.Style
 import pdfcrate.render.ComponentContext
@@ -33,56 +31,108 @@ class ImageTest {
 
     private lateinit var context: ComponentContext
 
-    companion object {
-        @JvmStatic
-        @BeforeAll
-        fun before() {
-            mockkStatic(PDImageXObject::createFromByteArray)
-            mockkStatic(PDImageXObject::createFromFileByContent)
-        }
+    @BeforeEach
+    fun before() {
+        mockkStatic(PDImageXObject::createFromByteArray)
+        mockkStatic(PDImageXObject::createFromFileByContent)
+    }
 
-        @JvmStatic
-        @AfterAll
-        fun after() {
-            unmockkAll()
-        }
+    @AfterEach
+    fun after() {
+        unmockkAll()
     }
 
     @Test
-    fun simpleImageFromByteArray() {
+    fun scaleWidthContent() {
         mockContext()
-        every { PDImageXObject.createFromByteArray(any(), any(), any()) } returns imageObject
-        val image = Image.fromContent(ByteArray(0), "test.jpg", Size(10f, 10f))
+        mockImage()
+        val image = Image.fromWidth(ByteArray(0), "test", 5f)
         val size = image.render(context)
-        assertThat(size).isEqualTo(Size(10f, 10f))
-        verify { PDImageXObject.createFromByteArray(any(), any(), eq("test.jpg")) }
+        assertThat(size).isEqualTo(Size(5f, 8f))
     }
 
     @Test
-    fun simpleImageFromFile() {
+    fun scaleWidthFile() {
+        mockContext()
+        mockImage()
+        val file = mockk<File>(relaxed = true)
+        val image = Image.fromWidth(file, 50f)
+        val size = image.render(context)
+        assertThat(size).isEqualTo(Size(50f, 80f))
+        verify { PDImageXObject.createFromFileByContent(eq(file), any()) }
+    }
+
+    @Test
+    fun scaleHeightContent() {
+        mockContext()
+        mockImage()
+        val image = Image.fromHeight(ByteArray(0), "test", 60f)
+        val size = image.render(context)
+        assertThat(size).isEqualTo(Size(37.5f, 60f))
+    }
+
+    @Test
+    fun scaleHeightFile() {
+        mockContext()
+        mockImage()
+        val file = mockk<File>(relaxed = true)
+        val image = Image.fromHeight(file, 20f)
+        val size = image.render(context)
+        assertThat(size).isEqualTo(Size(12.5f, 20f))
+        verify { PDImageXObject.createFromFileByContent(eq(file), any()) }
+    }
+
+    @Test
+    fun scaleHeightWithCallToBlocks() {
+        mockContext()
+        mockImage()
+        val file = mockk<File>(relaxed = true)
+        val image = Image.fromHeight(file, 20f)
+        val blocks = image.getBlocks(context)
+        val size = image.render(context)
+        assertThat(size).isEqualTo(Size(12.5f, 20f))
+        assertThat(blocks.width).isEqualTo(12.5f)
+        assertThat(blocks.heightBlocks).isEqualTo(listOf(20f))
+        verify(exactly = 1) { PDImageXObject.createFromFileByContent(eq(file), any()) }
+    }
+
+
+    @Test
+    fun manualScalingFromFile() {
         mockContext()
         val file = mockk<File>(relaxed = true)
         every { PDImageXObject.createFromFileByContent(any(), any()) } returns imageObject
-        val image = Image.fromFile(file, Size(10f, 10f))
+        val image = Image.scale(file, 10f, 10f)
         val size = image.render(context)
         assertThat(size).isEqualTo(Size(10f, 10f))
         verify { PDImageXObject.createFromFileByContent(eq(file), any()) }
     }
 
     @Test
-    fun simpleImageFromPath() {
+    fun manualScalingFromPath() {
         mockContext()
         every { PDImageXObject.createFromFileByContent(any(), any()) } returns imageObject
-        val image = Image.fromPath("test", Size(10f, 10f))
+        val image = Image.scale("test", 10f, 10f)
         val size = image.render(context)
         assertThat(size).isEqualTo(Size(10f, 10f))
         verify { PDImageXObject.createFromFileByContent(any(), any()) }
     }
 
     @Test
-    fun calculateImageSize() {
+    fun manualScalingFromByteArray() {
         mockContext()
-        val image = Image.fromPath("test", Size(10f, 10f))
+        every { PDImageXObject.createFromByteArray(any(), any(), any()) } returns imageObject
+        val image = Image.scale(ByteArray(0), "test.jpg", 10f, 10f)
+        val size = image.render(context)
+        assertThat(size).isEqualTo(Size(10f, 10f))
+        verify { PDImageXObject.createFromByteArray(any(), any(), eq("test.jpg")) }
+    }
+
+    @Test
+    fun manualScalingSize() {
+        mockContext()
+        every { PDImageXObject.createFromFileByContent(any(), any()) } returns imageObject
+        val image = Image.scale("test.png", 10f, 10f)
         val size = image.getBlocks(context)
         assertThat(size.width).isEqualTo(10f)
         assertThat(size.heightBlocks).isEqualTo(listOf(10f))
@@ -98,5 +148,12 @@ class ImageTest {
             style = Style.DEFAULT_STYLE,
             renderContext = generateRenderContext(DEFAULT_SIZE),
         )
+    }
+
+    private fun mockImage() {
+        every { PDImageXObject.createFromByteArray(any(), any(), any()) } returns imageObject
+        every { PDImageXObject.createFromFileByContent(any(), any()) } returns imageObject
+        every { imageObject.width } returns 25
+        every { imageObject.height } returns 40
     }
 }

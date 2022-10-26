@@ -7,7 +7,6 @@ import pdfcrate.document.LineStyle;
 import pdfcrate.document.TextStyle;
 import pdfcrate.util.Edges;
 import pdfcrate.util.Point;
-import pdfcrate.util.Size;
 
 import java.awt.*;
 import java.io.File;
@@ -129,8 +128,8 @@ public class Main {
                   TableColumn.absolute(200f, cellPadding),
                   TableColumn.proportional(1f, cellPadding)
                 }))
-        .add(Image.fromFile(imageFile(), new Size(400, 100f)))
-        .add(ScalingImage.fromWidth(imageFile(), 200f))
+        .add(Image.scale(imageFile(), 400, 100f))
+        .add(Image.fromWidth(imageFile(), 200f))
         .render(new FileOutputStream("test-output/test.pdf"));
   }
 
