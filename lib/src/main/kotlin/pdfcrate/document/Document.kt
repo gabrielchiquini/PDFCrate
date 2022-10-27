@@ -11,6 +11,7 @@ import pdfcrate.util.Edges
 import pdfcrate.util.Size
 import java.io.File
 import java.io.FileInputStream
+import java.io.InputStream
 import java.io.OutputStream
 
 /**
@@ -75,6 +76,15 @@ class Document {
      */
     fun loadFont(fontFile: File): PDFont {
         return PDType0Font.load(pdDocument, FileInputStream(fontFile))
+    }
+
+    /**
+     * Loads a font from an input stream and adds it to the document.
+     * The font is added as a [PDType0Font].
+     * @return the font object
+     */
+    fun loadFont(stream: InputStream): PDFont {
+        return PDType0Font.load(pdDocument, stream)
     }
 
     /**
