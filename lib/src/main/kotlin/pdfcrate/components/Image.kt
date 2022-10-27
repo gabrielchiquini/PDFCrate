@@ -119,7 +119,7 @@ class Image private constructor(
         val size = size(image)
         val wrapper = context.pages.contentStreamFor(context.y, size.height)
         wrapper.stream.drawImage(image, context.x, wrapper.realOffset - size.height, size.width, size.height)
-        return size.copy()
+        return Size(size.width, wrapper.virtualOffset + size.height - context.y)
     }
 
     private fun size(image: PDImageXObject) =

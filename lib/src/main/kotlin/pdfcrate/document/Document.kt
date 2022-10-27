@@ -19,7 +19,7 @@ import java.io.OutputStream
  * The components are rendered in the order they were added
  */
 class Document {
-    private var style: Style = Style.DEFAULT_STYLE
+    private var style: Style = Style.default()
     var margin = Edges.all(0f)
         private set
     var size = Size.A4

@@ -20,10 +20,10 @@ class TextStyle(
     constructor(
         font: PDFont? = null, fontSize: Float? = null, textColor: Color? = null, leading: Float? = null,
     ) : this(
-        font = font ?: DEFAULT_STYLE.font,
-        fontSize = fontSize ?: DEFAULT_STYLE.fontSize,
-        textColor = textColor ?: DEFAULT_STYLE.textColor,
-        leading = leading ?: DEFAULT_STYLE.leading
+        font = font ?: default().font,
+        fontSize = fontSize ?: default().fontSize,
+        textColor = textColor ?: default().textColor,
+        leading = leading ?: default().leading
     )
 
     constructor(builder: Builder) : this(
@@ -57,8 +57,8 @@ class TextStyle(
     }
 
     companion object {
-        @JvmField
-        val DEFAULT_STYLE =
+        @JvmStatic
+        fun default() =
             TextStyle(font = PDType1Font.HELVETICA, fontSize = 13f, textColor = Color.BLACK, leading = 1f)
 
         @JvmStatic

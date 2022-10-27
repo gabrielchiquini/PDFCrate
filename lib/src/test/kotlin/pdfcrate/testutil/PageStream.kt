@@ -24,5 +24,5 @@ fun mockPageStreamSimple(pageStream: PageStream, contentStream: PDPageContentStr
 
 fun mockPageStreamReal(size: Float): PageStream {
     val document = mockk<PDDocument>(relaxed = true)
-    return PageStream(document, RenderContext(Style.DEFAULT_STYLE, Edges.ZERO, Size(size, size)))
+    return PageStream(document, RenderContext(Style.default(), Edges.ZERO, Size(size, size)))
 }

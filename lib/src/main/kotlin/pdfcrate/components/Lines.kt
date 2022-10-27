@@ -14,7 +14,7 @@ import kotlin.math.max
  * @param points The list of points where the points will be drawn.
  *               Points coordinates are relative to the x and y in the rendering context
  */
-class Lines(
+class Lines @JvmOverloads constructor(
     private val points: List<Point>,
     private val lineStyle: LineStyle? = null
 ) : SizedComponent {

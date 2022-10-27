@@ -79,13 +79,13 @@ class PageStreamTest {
     }
 
     private fun rendererContextNoMargins() = RenderContext(
-        style = Style.DEFAULT_STYLE,
+        style = Style.default(),
         margin = Edges.ZERO,
         pageSize = Size(100f, 100f),
     )
 
     private fun rendererContextWithMargins() = RenderContext(
-        style = Style.DEFAULT_STYLE,
+        style = Style.default(),
         margin = Edges.all(10f),
         pageSize = Size(100f, 100f),
     )

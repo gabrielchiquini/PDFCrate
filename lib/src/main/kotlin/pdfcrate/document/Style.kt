@@ -6,9 +6,9 @@ class Style(
 ) {
     companion object {
         @JvmStatic
-        val DEFAULT_STYLE: Style = Style(
-            TextStyle.DEFAULT_STYLE,
-            LineStyle.DEFAULT_STYLE,
+        fun default() = Style(
+            TextStyle.default(),
+            LineStyle.default(),
         )
 
     }

@@ -14,8 +14,8 @@ class LineStyle(
 ) {
 
     companion object {
-        @JvmField
-        val DEFAULT_STYLE = LineStyle(
+        @JvmStatic
+        fun default() = LineStyle(
             dashPattern = floatArrayOf(),
             dashPhase = 0f,
             capStyle = 0,

@@ -121,7 +121,7 @@ class TextTest {
             x = 0f,
             maxX = DEFAULT_SIZE,
             y = 0f,
-            style = Style.DEFAULT_STYLE,
+            style = Style.default(),
             renderContext = generateRenderContext(DEFAULT_SIZE),
         )
     }

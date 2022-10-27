@@ -16,7 +16,7 @@ fun verifyComponentContext(context: ComponentContext, x: Float, maxX: Float, y: 
 }
 
 fun generateRenderContext(size: Float, margin: Edges = Edges.ZERO) = RenderContext(
-    Style.DEFAULT_STYLE, margin, Size(
+    Style.default(), margin, Size(
         size,
         size
     )

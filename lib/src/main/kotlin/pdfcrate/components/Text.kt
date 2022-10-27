@@ -19,7 +19,7 @@ class Text @JvmOverloads constructor(
 ) : SizedComponent {
 
     @JvmOverloads
-    constructor(text: String, localStyle: TextStyle? = null) : this(text.split('\n'), localStyle)
+    constructor(text: String, localStyle: TextStyle? = null) : this(text.lines(), localStyle)
 
     override fun getBlocks(context: ComponentContext): SizeBlocks {
         val style = localStyle ?: context.style.textStyle
