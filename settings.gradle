@@ -9,6 +9,6 @@
 
 rootProject.name = 'pdfcrate-wrapper'
 include('lib')
-include('example')
+include('examples')
 
 project(':lib').name = 'pdfcrate'

@@ -34,3 +34,5 @@ new Document()
         .add(new Text("Hello world!"))
         .render(new FileOutputStream("hello-world.pdf"))
 ```
+
+More examples can be found in [examples](https://github.com/gabrielchiquini/PDFCrate/tree/main/examples)
