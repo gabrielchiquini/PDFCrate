@@ -1,4 +1,4 @@
-package pdfcrate.example;
+package pdfcrate.examples;
 
 import pdfcrate.components.FlexibleText;
 import pdfcrate.components.Paragraph;

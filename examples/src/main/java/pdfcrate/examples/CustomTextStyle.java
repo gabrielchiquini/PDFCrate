@@ -1,4 +1,4 @@
-package pdfcrate.example;
+package pdfcrate.examples;
 
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import pdfcrate.components.Paragraph;
@@ -9,7 +9,7 @@ import java.awt.*;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 
-import static pdfcrate.example.Common.LOREM_IPSUM_PARAGRAPH;
+import static pdfcrate.examples.Common.LOREM_IPSUM_PARAGRAPH;
 
 /** Modify the default text style */
 public class CustomTextStyle {

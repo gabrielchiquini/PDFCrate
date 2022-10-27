@@ -1,4 +1,4 @@
-package pdfcrate.example;
+package pdfcrate.examples;
 
 import java.io.File;
 import java.io.FileNotFoundException;

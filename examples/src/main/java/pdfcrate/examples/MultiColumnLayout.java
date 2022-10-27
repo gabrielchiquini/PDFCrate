@@ -1,4 +1,4 @@
-package pdfcrate.example;
+package pdfcrate.examples;
 
 import pdfcrate.components.HorizontalLayout;
 import pdfcrate.components.HorizontalLayoutColumn;
@@ -9,7 +9,7 @@ import pdfcrate.util.Edges;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 
-import static pdfcrate.example.Common.LOREM_IPSUM_PARAGRAPH;
+import static pdfcrate.examples.Common.LOREM_IPSUM_PARAGRAPH;
 
 /**
  * Renders a three column layout where the first takes half of the page and the other two are split

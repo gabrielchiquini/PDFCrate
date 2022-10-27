@@ -1,4 +1,4 @@
-package pdfcrate.example;
+package pdfcrate.examples;
 
 import pdfcrate.components.Center;
 import pdfcrate.components.Column;

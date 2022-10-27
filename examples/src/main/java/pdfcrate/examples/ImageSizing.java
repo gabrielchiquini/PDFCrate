@@ -1,4 +1,4 @@
-package pdfcrate.example;
+package pdfcrate.examples;
 
 import pdfcrate.components.Image;
 import pdfcrate.components.Paragraph;
@@ -10,7 +10,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.net.URISyntaxException;
 
-import static pdfcrate.example.Common.imageFile;
+import static pdfcrate.examples.Common.imageFile;
 
 /** Shows how the image can be scaled in the document */
 public class ImageSizing {
