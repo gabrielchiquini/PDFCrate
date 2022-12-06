@@ -2,7 +2,9 @@ package pdfcrate.document
 
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.pdmodel.font.PDFont
+import org.apache.pdfbox.pdmodel.font.PDTrueTypeFont
 import org.apache.pdfbox.pdmodel.font.PDType0Font
+import org.apache.pdfbox.pdmodel.font.encoding.WinAnsiEncoding
 import pdfcrate.components.Component
 import pdfcrate.render.ComponentContext
 import pdfcrate.render.PageStream
@@ -71,11 +73,14 @@ class Document {
 
     /**
      * Loads a font from a file and adds it to the document.
-     * The font is added as a [PDType0Font].
+     *
+     * The font is added as a [PDType0Font] and some features may not be available.
+     * Use [loadTTF] for full feature support
+     *
      * @return the font object
      */
     fun loadFont(fontFile: File): PDFont {
-        return PDType0Font.load(pdDocument, FileInputStream(fontFile))
+        return loadFont(FileInputStream(fontFile))
     }
 
     /**
@@ -85,6 +90,24 @@ class Document {
      */
     fun loadFont(stream: InputStream): PDFont {
         return PDType0Font.load(pdDocument, stream)
+    }
+
+    /**
+     * Loads a TTF font from a file and adds it to the document.
+     * The font is added as a [PDTrueTypeFont]. For Unicode support use [loadFont]
+     * @return the font object
+     */
+    fun loadTTF(fontFile: File): PDFont {
+        return loadTTF(FileInputStream(fontFile))
+    }
+
+    /**
+     * Loads a TTF font from a file and adds it to the document.
+     * The font is added as a [PDTrueTypeFont]. For Unicode support use [loadFont]
+     * @return the font object
+     */
+    fun loadTTF(stream: InputStream): PDFont {
+        return PDTrueTypeFont.load(pdDocument, stream, WinAnsiEncoding.INSTANCE)
     }
 
     /**

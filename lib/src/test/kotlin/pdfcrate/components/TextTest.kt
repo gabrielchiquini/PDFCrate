@@ -38,10 +38,13 @@ class TextTest {
         val size = Text(TEST_TEXT, TextStyle(fontSize = fontSize)).render(context)
         assertThat(size.width).isLessThan(DEFAULT_SIZE)
         assertThat(size.height).isEqualTo(fontSize)
-        verify { pageStream.contentStreamFor(eq(0f), eq(fontSize)) }
-        verify { contentStream.newLineAtOffset(eq(0f), eq(DEFAULT_SIZE - fontSize)) }
-        verify { contentStream.setFont(any(), fontSize) }
-        verify { contentStream.showText(eq(TEST_TEXT)) }
+        verify {
+            pageStream.contentStreamFor(eq(0f), eq(fontSize))
+            contentStream.newLineAtOffset(eq(0f), eq(DEFAULT_SIZE))
+            contentStream.newLine()
+            contentStream.setFont(any(), fontSize)
+            contentStream.showText(eq(TEST_TEXT))
+        }
         verifyBasicCommands()
     }
 
@@ -54,11 +57,83 @@ class TextTest {
         val size = Text(text, TextStyle(fontSize = fontSize)).render(context)
         assertThat(size.width).isLessThan(DEFAULT_SIZE)
         assertThat(size.height).isEqualTo(fontSize * 3)
-        verify { pageStream.contentStreamFor(eq(0f), eq(fontSize)) }
-        verify { contentStream.newLineAtOffset(eq(0f), eq(DEFAULT_SIZE - fontSize)) }
-        verify(exactly = 3) { contentStream.newLine() }
-        verify { contentStream.setFont(any(), fontSize) }
-        verify(exactly = 3) { contentStream.showText(eq(TEST_TEXT)) }
+
+        verify {
+            pageStream.contentStreamFor(eq(0f), eq(fontSize))
+            contentStream.newLineAtOffset(eq(0f), eq(DEFAULT_SIZE))
+            contentStream.setFont(any(), fontSize)
+        }
+        verify(exactly = 3) {
+            contentStream.showText(eq(TEST_TEXT))
+            contentStream.newLine()
+        }
+        verifyBasicCommands()
+    }
+
+    @Test
+    fun writeMultipleLinesRightAligned() {
+        mockContext()
+        val fontSize = DEFAULT_FONT_SIZE
+        val lines = List(3) { TEST_TEXT }
+        val size = Text.rightAlign(lines, TextStyle(fontSize = fontSize)).render(context)
+        assertThat(size.width).isEqualTo(DEFAULT_SIZE)
+        assertThat(size.height).isEqualTo(fontSize * 3)
+
+        verify {
+            pageStream.contentStreamFor(eq(0f), eq(fontSize))
+            contentStream.newLineAtOffset(eq(0f), eq(-fontSize))
+            contentStream.newLineAtOffset(neq(0f), eq(-fontSize))
+            contentStream.setFont(any(), fontSize)
+        }
+        verify(exactly = 2) {
+            contentStream.newLineAtOffset(eq(0f), eq(-fontSize))
+        }
+        verify(exactly = 3) {
+            contentStream.showText(eq(TEST_TEXT))
+        }
+        verifyBasicCommands()
+    }
+
+
+    @Test
+    fun writeSingleJustified() {
+        mockContext()
+        val fontSize = DEFAULT_FONT_SIZE
+        val size = Text.justify(TEST_TEXT, TextStyle(fontSize = fontSize)).render(context)
+        assertThat(size.width).isLessThan(DEFAULT_SIZE)
+        assertThat(size.height).isEqualTo(fontSize)
+
+        verify {
+            pageStream.contentStreamFor(eq(0f), eq(fontSize))
+            contentStream.newLineAtOffset(eq(0f), eq(DEFAULT_SIZE))
+            contentStream.setFont(any(), fontSize)
+            contentStream.showText(eq(TEST_TEXT))
+            contentStream.newLine()
+        }
+        verifyBasicCommands()
+    }
+
+    @Test
+    fun writeMultipleJustified() {
+        mockContext()
+        val fontSize = DEFAULT_FONT_SIZE
+        val lines = List(3) { TEST_TEXT }
+        val size = Text.justify(lines, TextStyle(fontSize = fontSize)).render(context)
+        assertThat(size.width).isEqualTo(DEFAULT_SIZE)
+        assertThat(size.height).isEqualTo(fontSize * 3)
+
+        verify {
+            pageStream.contentStreamFor(eq(0f), eq(fontSize))
+            contentStream.newLineAtOffset(eq(0f), eq(DEFAULT_SIZE))
+            contentStream.setFont(any(), fontSize)
+        }
+        verify(exactly = 3) {
+            contentStream.showText(eq(TEST_TEXT))
+            contentStream.newLine()
+        }
+        verify(exactly = 2) {
+            contentStream.setWordSpacing(any())
+        }
         verifyBasicCommands()
     }
 
@@ -66,11 +141,8 @@ class TextTest {
     fun writeMultipleLinesPageBreak() {
         mockContext()
         val fontSize = DEFAULT_FONT_SIZE
-        var text = "$TEST_TEXT\n"
-        for (i in 0..50) {
-            text += "$TEST_TEXT\n"
-        }
-        val size = Text(text, TextStyle(fontSize = fontSize)).render(context)
+        val lines = List(50) { TEST_TEXT }
+        val size = Text(lines, TextStyle(fontSize = fontSize)).render(context)
         assertThat(size.width).isLessThan(DEFAULT_SIZE)
         assertThat(size.height).isGreaterThan(DEFAULT_SIZE)
         verify { pageStream.contentStreamFor(eq(0f), eq(fontSize)) }
@@ -79,7 +151,7 @@ class TextTest {
     }
 
     @Test
-    fun sizeBlocksTest() {
+    fun sizeBlocksLeft() {
         mockContext()
         val fontSize = DEFAULT_FONT_SIZE
         val text = "$TEST_TEXT\n$TEST_TEXT\n"
@@ -88,10 +160,34 @@ class TextTest {
         assertThat(size.heightBlocks).allMatch { it == fontSize }
     }
 
+    @Test
+    fun sizeBlocksJustified() {
+        mockContext()
+        val fontSize = DEFAULT_FONT_SIZE
+        val text = "$TEST_TEXT\n$TEST_TEXT\n"
+        val size = Text.justify(text, TextStyle(fontSize = fontSize)).getBlocks(context)
+        assertThat(size.width).isEqualTo(DEFAULT_SIZE)
+        assertThat(size.heightBlocks).hasSize(3)
+        assertThat(size.heightBlocks).allMatch { it == fontSize }
+    }
+
+    @Test
+    fun sizeBlocksRightAlign() {
+        mockContext()
+        val fontSize = DEFAULT_FONT_SIZE
+        val text = "$TEST_TEXT\n$TEST_TEXT\n"
+        val size = Text.rightAlign(text, TextStyle(fontSize = fontSize)).getBlocks(context)
+        assertThat(size.width).isEqualTo(DEFAULT_SIZE)
+        assertThat(size.heightBlocks).hasSize(3)
+        assertThat(size.heightBlocks).allMatch { it == fontSize }
+    }
+
     private fun verifyBasicCommands(fontSize: Float = DEFAULT_FONT_SIZE, times: Int = 1) {
-        verify(exactly = times) { contentStream.setFont(any(), fontSize) }
-        verify(exactly = times) { contentStream.beginText() }
-        verify(exactly = times) { contentStream.endText() }
+        verify(exactly = times) {
+            contentStream.beginText()
+            contentStream.setFont(any(), fontSize)
+            contentStream.endText()
+        }
     }
 
 

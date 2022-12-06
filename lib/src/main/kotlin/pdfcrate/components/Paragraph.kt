@@ -10,9 +10,25 @@ import pdfcrate.util.SizeBlocks
 /**
  * Creates a block of text aligned to the left using the whole width of the parent, breaking lines when needed
  */
-class Paragraph @JvmOverloads constructor(
-    private val text: String, private val localStyle: TextStyle? = null
+class Paragraph constructor(
+    private val text: String,
+    private val align: TextAlign = TextAlign.LEFT,
+    private val localStyle: TextStyle? = null
 ) : SizedComponent {
+
+    @JvmOverloads
+    constructor(text: String, localStyle: TextStyle? = null) : this(text, TextAlign.LEFT, localStyle)
+
+    companion object {
+        @JvmOverloads
+        @JvmStatic
+        fun justify(text: String, localStyle: TextStyle? = null) = Paragraph(text, TextAlign.JUSTIFIED, localStyle)
+
+        @JvmOverloads
+        @JvmStatic
+        fun right(text: String, localStyle: TextStyle? = null) = Paragraph(text, TextAlign.RIGHT, localStyle)
+    }
+
     override fun getBlocks(context: ComponentContext): SizeBlocks {
         val lines = getLines(context)
         return Text(lines, getStyle(context)).getBlocks(context)
@@ -20,7 +36,7 @@ class Paragraph @JvmOverloads constructor(
 
     override fun render(context: ComponentContext): Size {
         val lines = getLines(context)
-        return Text(lines, getStyle(context)).render(context)
+        return Text(lines, align, getStyle(context)).render(context)
     }
 
     private fun getLines(

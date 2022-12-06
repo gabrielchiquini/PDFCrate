@@ -17,16 +17,16 @@ import static pdfcrate.examples.Common.LOREM_IPSUM_PARAGRAPH;
 public class CustomTextStyle {
   public static void main(String[] args) throws IOException {
     final var document = new Document();
-    final var customFont = document.loadFont(Objects.requireNonNull(fontInputStream()));
+    final var customFont = document.loadTTF(Objects.requireNonNull(fontInputStream()));
     document
         // using one of the 14 default fonts
         .textStyle(document.textStyle().toBuilder().fontSize(20f).font(PDType1Font.COURIER).build())
         .margin(Edges.all(20))
         // will use the text style defined above
-        .add(new Paragraph(LOREM_IPSUM_PARAGRAPH))
+        .add(Paragraph.right(LOREM_IPSUM_PARAGRAPH))
         // will modify the text styte only for this component
         .add(
-            new Paragraph(
+            Paragraph.justify(
                 LOREM_IPSUM_PARAGRAPH,
                 document.textStyle().toBuilder()
                     // using a custom font
