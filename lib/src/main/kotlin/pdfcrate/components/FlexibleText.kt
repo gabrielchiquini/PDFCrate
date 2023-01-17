@@ -44,7 +44,11 @@ class FlexibleText @JvmOverloads constructor(
     private fun fontSize(
         context: ComponentContext, style: TextStyle
     ): Float {
-        val maxSize = (context.width()) * 1000 / style.font.getStringWidth(text)
+        val stringWidth = style.font.getStringWidth(text)
+        if (stringWidth == 0f) {
+            return 0f
+        }
+        val maxSize = (context.width()) * 1000 / stringWidth
         return min(style.fontSize, maxSize)
     }
 }

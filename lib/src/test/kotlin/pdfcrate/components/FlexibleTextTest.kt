@@ -72,6 +72,30 @@ class FlexibleTextTest {
         assertThat(size.heightBlocks).isEqualTo(listOf(fontSize))
     }
 
+    @Test
+    fun getBlocksEmptyText() {
+        mockContext()
+        val fontSize = 10f
+        val size = FlexibleText("", TextStyle(fontSize = fontSize)).getBlocks(context)
+        assertThat(size.width).isEqualTo(0f)
+        assertThat(size.heightBlocks).isEqualTo(listOf(fontSize))
+    }
+
+    @Test
+    fun writeEmptyText() {
+        mockContext()
+        val fontSize = 10f
+        val size = FlexibleText("", TextStyle(fontSize = fontSize)).render(context)
+        assertThat(size.height).isEqualTo(fontSize)
+        assertThat(size.width).isEqualTo(0f)
+        verify { pageStream.contentStreamFor(eq(0f), eq(size.height)) }
+        verify { contentStream.newLineAtOffset(eq(0f), any()) }
+        verify { contentStream.showText(eq("")) }
+        verify { contentStream.beginText() }
+        verify { contentStream.endText() }
+    }
+
+
     private fun verifyShowText() {
         verify { contentStream.showText(eq(TEST_TEXT)) }
         verify { contentStream.beginText() }
